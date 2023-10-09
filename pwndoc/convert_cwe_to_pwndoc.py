@@ -25,6 +25,12 @@ def remed_is_acceptable(r):
             return True
     return False
 
+def insertbrs(s: str):
+    return s.replace('\r', '').replace('\n', '<br>')
+
+def wrapp(s: str):
+    return '<p>' + insertbrs(s) + '</p>'
+
 def get_remediations(p):
     if not p:
         return None
@@ -33,7 +39,7 @@ def get_remediations(p):
         #print(p)
         #print(q)
         if q and remed_is_acceptable(q['PHASE']) and q['DESCRIPTION']:
-            r.append(q['PHASE'] + ': ' + q['DESCRIPTION'])
+            r.append(wrapp(q['PHASE'] + ': ' + q['DESCRIPTION']))
     return '\n'.join(r)
 
 with open('699.csv', newline='') as csvfile, open('699.xml') as garbage, open("vulns.yml", 'w') as outfile:
@@ -51,7 +57,7 @@ with open('699.csv', newline='') as csvfile, open('699.xml') as garbage, open("v
         dt['locale'] = 'en-US'
         dt['title'] = row['Name']
         dt['vulnType'] = None
-        dt['description'] = row['Description'] + '\n' + row['Extended Description']
+        dt['description'] = wrapp(row['Description']) + wrapp(row['Extended Description'])
         dt['observation'] = None
         dt['remediation'] = get_remediations(row['Potential Mitigations'])
         d['details'] = [dt]
