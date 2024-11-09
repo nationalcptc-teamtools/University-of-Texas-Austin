@@ -1,0 +1,100 @@
+\documentclass[11pt,oneside,a4paper]{book}
+\usepackage[%
+  a4paper,%
+  left = 20mm,%
+  right = 20mm,%
+  textwidth = 178mm,%
+  top = 40mm,%
+  bottom = 30mm,%
+  %heightrounded,%
+  headheight=70pt,%
+  headsep=25pt,%
+]{geometry}
+
+\usepackage[sfdefault,light]{FiraSans}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{lastpage}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{xspace}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{color,colortbl}
+\usepackage{xcolor}
+
+\usepackage{longtable}
+
+\definecolor{link-blue}{RGB}{6,69,173}
+\definecolor{dark-green}{RGB}{52,133,62}
+\definecolor{light-blue}{RGB}{127,180,240}
+\definecolor{dark-blue}{RGB}{72,120,224}
+\definecolor{heading-grey}{RGB}{128,128,128}
+\definecolor{heading2-grey}{RGB}{200,200,200}
+\definecolor{Critical}{RGB}{128,0,128}
+\definecolor{High}{RGB}{255,0,0}
+\definecolor{Medium}{RGB}{255,192,0}
+\definecolor{Low}{RGB}{255,255,0}
+\definecolor{Informational}{RGB}{94,185,255}
+
+
+\title{ogre stuff 2}
+
+\begin{document}
+
+
+\tableofcontents
+
+\newpage
+
+\section{Metrics}
+
+\subsection{Risk Scale}
+\begin{table}[h!]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \setlength{\tabcolsep}{6pt}
+    \begin{tabularx}{\linewidth}{|X|c|c|c|c|c|}
+        \hline
+        \rowcolor{gray!30} & \multicolumn{5}{c|}{\textbf{Impact}} \\ \cline{2-6}
+        \rowcolor{white} \cellcolor{gray!30}\textbf{Likelihood} & Informational & Low & Moderate & High & Critical \\ \hline
+        \textbf{Certain} & \cellcolor{Informational}Informational & \cellcolor{Medium}Moderate & \cellcolor{High}High & \textcolor{white}{\cellcolor{Critical}Critical} & \textcolor{white}{\cellcolor{Critical}Critical} \\ \hline
+        \textbf{Expected} & \cellcolor{Informational}Informational & \cellcolor{Low}Low & \cellcolor{Medium}Moderate & \cellcolor{High}High & \textcolor{white}{\cellcolor{Critical}Critical} \\ \hline
+        \textbf{Common} & \cellcolor{Informational}Informational & \cellcolor{Low}Low & \cellcolor{Medium}Moderate & \cellcolor{High}High & \cellcolor{High}High \\ \hline
+        \textbf{Rare} & \cellcolor{Informational}Informational & \cellcolor{Low}Low & \cellcolor{Low}Low & \cellcolor{Medium}Moderate & \cellcolor{High}High \\ \hline
+        \textbf{Undetermined} & \cellcolor{Informational}Informational & \cellcolor{Informational}Informational & \cellcolor{Informational}Informational & \cellcolor{Informational}Informational & \cellcolor{Informational}Informational \\ \hline
+    \end{tabularx}
+    \caption{Risk Matrix Table}
+    \label{tab:risk_matrix}
+\end{table}
+
+\subsection{Overall Risk}
+\begin{longtable}{|m{3cm}|m{10cm}|}
+        \hline
+        \rowcolor{gray!30 }\multicolumn{1}{|>{\centering\arraybackslash}m{30mm}|}{\textcolor{black}{\textbf{Severity}}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{100mm}|}{\textcolor{black}{\textbf{Definition}}} \\ \hline
+        % Begin security ratings %
+        \cellcolor{Critical}\textbf{\textcolor{white}{Critical}} &  ogre \\ \hline
+        \cellcolor{High}\textbf{High} & ogre  \\ \hline
+        \cellcolor{Medium}\textbf{Moderate} & ogre \\ \hline
+        \cellcolor{Low}\textbf{Low} & ogre \\ \hline
+        \cellcolor{Informational}\textbf{Informational} & ogre \\ \hline
+\caption{Overall Risk}
+\end{longtable}
+
+\subsection{Impact}
+
+\subsection{Vulnerabilities}
+\begin{longtable}{|m{3cm}|m{4cm}|m{4cm}|}
+        \hline
+        \rowcolor{gray!30 }\multicolumn{1}{|>{\centering\arraybackslash}m{30mm}|}{\textcolor{black}{\textbf{Risk}}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{50mm}|}{\textcolor{black}{\textbf{Vulnerability}}} & \multicolumn{1}{>{\centering\arraybackslash}m{50mm}|}{\textcolor{black}{\textbf{Affected Scope}}}\\ \hline
+        % Begin security ratings %
+        \cellcolor{Critical}\textbf{\textcolor{white}{Critical}} & ogre & ogre \\ \hline
+        \cellcolor{High}\textbf{High} & ogre & ogre \\ \hline
+        \cellcolor{Medium}\textbf{Moderate} & ogre & ogre \\ \hline
+        \cellcolor{Low}\textbf{Low} & ogre & ogre \\ \hline
+        \cellcolor{Informational}\textbf{Informational} & ogre & ogre \\ \hline
+\caption{Vulnerabilities}
+\end{longtable}
+
+\end{document}
