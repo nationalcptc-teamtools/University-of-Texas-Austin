@@ -1,0 +1,58 @@
+[
+    {
+        "title": "Weak Authentication on Tram Control",
+        "severity": {
+            "overall": "Critical",
+            "likelihood": "High",
+            "impact": "Critical"
+        },
+        "scope": "10.0.20.101:80\\\\10.0.20.102:80\\\\10.0.20.103:80",
+        "description": "We noticed that upon using /login.html on 10.0.20.101-103:80, if we provided an incorrect ``admin code'' we were assigned an authorization header. This header, when decoded from base64, revealed that we were authorized as a ``guest.''\\\\ \\includegraphics[width=\\textwidth]{ameya-01.png}",
+        "impact": "An attacker would be able to completely control all three trams, stopping or starting them at will. This could cause massive damage to trams and cause the loss of life of passengers using the trams, should the trams start and stop in an unsafe manner.",
+        "confirmation": "\\begin{enumerate} \\item Provide an arbitrary code to 10.0.20.101-103/login.html and capture the auth header \\item Decode the header from base64 \\item Change ``guest'' to ``admin'' \\item Encode the new payload back into base64 \\item Change the auth header to the new base64 payload, and visit 10.0.20.101-103/admin \\end{enumerate}\\vspace{-0.2cm}",
+        "remediation": "Authorization token should not be encoded with base64, as these are easily reversible and cryptographically insecure. Instead, authentication can be carried out using various types of tokens like OAuth and JSON Web Tokens. Additionally, users with elevated privileges should be stored server-side, as opposed to client-side, as attackers can control all client-side input.",
+        "references": "https://frontegg.com/blog/token-based-authentication"
+    },
+    {
+        "title": "Guest Account Enabled Without Password in Active Directory",
+        "severity": {
+            "overall": "Critical",
+            "likelihood": "High",
+            "impact": "Critical"
+        },
+        "scope": "10.0.0.6\\\\10.0.0.201\\\\10.0.0.202\\\\10.0.0.203",
+        "description": "There is an active guest account that can be used to log in to most Windows authentication applications and machines. This account does not have a password and is thus easily accessible to attackers. The Guest account is disabled by default and is not intended to be enabled without specifically restricted privileges for a limited period of time.",
+        "impact": "Attackers can use default guest credentials to access many company resources such as workstations and email services. Additionally, attackers can read active directory information that does not require privileged access.",
+        "confirmation": "Connect to Windows machines via services like RDP by providing 'guest' as the username and supplying a blank password. It may be required to provide a domain within the username (e.g. `corp.kkms.local{\\textbackslash}guest').",
+        "remediation": "Disable the guest account. If the guest account is needed, temporarily enable it with reduced permissions and immediately disable the account when finished.",
+        "references": "https://learn.microsoft.com/en-us/windows-server/identity/ad-\\\\ds/manage/understand-default-user-accounts"
+    },
+    {
+        "title": "Arbitrary Users can Register Trams on Tram Control Site",
+        "severity": {
+            "overall": "High",
+            "likelihood": "Medium",
+            "impact": "High"
+        },
+        "scope": "10.20.100.30:1000",
+        "description": "Authenticated users can register trams that will appear on the tram homepage. The methods to register a tram are documented on 10.20.10.30:1000/docs",
+        "impact": "An attacker could use this feature to falsify schedules which could cause chaos.\\\\An attacker could also register multiple false trams with false schedules.",
+        "confirmation": "\\begin{enumerate} \\item Visit 10.0.20.100:3000/register \\item Make a POST request with the parameters specified in 10.0.20.100:3000/docs \\item Visit 10.0.20.100:3000/home and view the new tram that was registered \\end{enumerate} \\vspace{-0.2cm}",
+        "remediation": "Require some form of authentication/home view trams that should only be accessible with authorization privileges so ensure only the proper admins can register new trams.",
+        "references": "N/A"
+    },
+    {
+        "title": "Anonymous LDAP Bind on Active Directory Domain Controllers",
+        "severity": {
+            "overall": "Medium",
+            "likelihood": "High",
+            "impact": "Medium"
+        },
+        "scope": "10.0.0.5:389\\\\10.0.0.5:636\\\\10.0.0.5:3268\\\\10.0.0.5:3269",
+        "description": "This is an un-remediated vulnerability from previous assessments. This is an issue that allows anonymous binding to the company's LDAP directory service, enabling attackers to enumerate and obtain information from this anonymous name, blind searches for other important metadata.",
+        "impact": "This exported information data is valuable for potential attackers since it comprises all user email addresses and aids attacker attempts to obtain information from exposed personal LDAP path if enabled.",
+        "confirmation": "Run the nmap script for LDAP search to obtain information from anonymous LDAP bind if enabled.\\\\ \\includegraphics[width=\\textwidth]{ameya-02.png}",
+        "remediation": "We recommend disabling anonymous bind, as described in the second reference link, or if it is necessary for some applications, utilizing a bind account.",
+        "references": "https://nmap.org/nsedoc/scripts/ldap-search.html \\\\ https://blog.lithnet.io/2018/12/disabling-unauthenticated-binds-in.html"
+    }
+]

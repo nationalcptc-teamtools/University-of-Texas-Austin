@@ -1,0 +1,14 @@
+{
+    "title": "Guest Account Enabled Without Password in Active Directory",
+    "severity": {
+        "overall": "Critical",
+        "likelihood": "High",
+        "impact": "Critical"
+    },
+    "scope": "10.0.0.6\\\\10.0.0.201\\\\10.0.0.202\\\\10.0.0.203",
+    "description": "There is an active guest account that can be used to log in to most Windows authentication applications and machines. This account does not have a password and is thus easily accessible to attackers. The Guest account is disabled by default and is not intended to be enabled without specifically restricted privileges for a limited period of time.",
+    "impact":"Attackers can use default guest credentials to access many company resources such as workstations and email services. Additionally, attackers can read active directory information that does not require privileged access.",
+    "confirmation":"Connect to Windows machines via services like RDP by providing 'guest' as the username and supplying a blank password. It may be required to provide a domain within the username (e.g. `corp.kkms.local{\\textbackslash}guest').",
+    "remediation":"Disable the guest account. If the guest account is needed, temporarily enable it with reduced permissions and immediately disable the account when finished.",
+    "references": "https://learn.microsoft.com/en-us/windows-server/identity/ad-\\\\ds/manage/understand-default-user-accounts"
+}

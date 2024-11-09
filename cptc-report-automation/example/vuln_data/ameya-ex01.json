@@ -1,0 +1,14 @@
+{
+    "title": "Weak Authentication on Tram Control",
+    "severity": {
+        "overall": "Critical",
+        "likelihood": "High",
+        "impact": "Critical"
+    },
+    "scope": "10.0.20.101:80\\\\10.0.20.102:80\\\\10.0.20.103:80",
+    "description": "We noticed that upon using /login.html on 10.0.20.101-103:80, if we provided an incorrect ``admin code'' we were assigned an authorization header. This header, when decoded from base64, revealed that we were authorized as a ``guest.''\\\\ \\includegraphics[width=\\textwidth]{ameya-01.png}",
+    "impact":"An attacker would be able to completely control all three trams, stopping or starting them at will. This could cause massive damage to trams and cause the loss of life of passengers using the trams, should the trams start and stop in an unsafe manner.",
+    "confirmation":"\\begin{enumerate} \\item Provide an arbitrary code to 10.0.20.101-103/login.html and capture the auth header \\item Decode the header from base64 \\item Change ``guest'' to ``admin'' \\item Encode the new payload back into base64 \\item Change the auth header to the new base64 payload, and visit 10.0.20.101-103/admin \\end{enumerate}\\vspace{-0.2cm}",
+    "remediation":"Authorization token should not be encoded with base64, as these are easily reversible and cryptographically insecure. Instead, authentication can be carried out using various types of tokens like OAuth and JSON Web Tokens. Additionally, users with elevated privileges should be stored server-side, as opposed to client-side, as attackers can control all client-side input.",
+    "references": "https://frontegg.com/blog/token-based-authentication"
+}

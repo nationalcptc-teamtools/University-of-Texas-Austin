@@ -1,0 +1,14 @@
+{
+    "title": "Arbitrary Users can Register Trams on Tram Control Site",
+    "severity": {
+        "overall": "High",
+        "likelihood": "Medium",
+        "impact": "High"
+    },
+    "scope": "10.20.100.30:1000",
+    "description": "Authenticated users can register trams that will appear on the tram homepage. The methods to register a tram are documented on 10.20.10.30:1000/docs",
+    "impact":"An attacker could use this feature to falsify schedules which could cause chaos.\\\\An attacker could also register multiple false trams with false schedules.",
+    "confirmation":"\\begin{enumerate} \\item Visit 10.0.20.100:3000/register \\item Make a POST request with the parameters specified in 10.0.20.100:3000/docs \\item Visit 10.0.20.100:3000/home and view the new tram that was registered \\end{enumerate} \\vspace{-0.2cm}",
+    "remediation":"Require some form of authentication/home view trams that should only be accessible with authorization privileges so ensure only the proper admins can register new trams.",
+    "references": "N/A"
+}

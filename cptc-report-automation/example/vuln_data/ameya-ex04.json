@@ -1,0 +1,14 @@
+{
+    "title": "Anonymous LDAP Bind on Active Directory Domain Controllers",
+    "severity": {
+        "overall": "Medium",
+        "likelihood": "High",
+        "impact": "Medium"
+    },
+    "scope": "10.0.0.5:389\\\\10.0.0.5:636\\\\10.0.0.5:3268\\\\10.0.0.5:3269",
+    "description": "This is an un-remediated vulnerability from previous assessments. This is an issue that allows anonymous binding to the company's LDAP directory service, enabling attackers to enumerate and obtain information from this anonymous name, blind searches for other important metadata.",
+    "impact":"This exported information data is valuable for potential attackers since it comprises all user email addresses and aids attacker attempts to obtain information from exposed personal LDAP path if enabled.",
+    "confirmation":"Run the nmap script for LDAP search to obtain information from anonymous LDAP bind if enabled.\\\\ \\includegraphics[width=\\textwidth]{ameya-02.png}",
+    "remediation":"We recommend disabling anonymous bind, as described in the second reference link, or if it is necessary for some applications, utilizing a bind account.",
+    "references": "https://nmap.org/nsedoc/scripts/ldap-search.html \\\\ https://blog.lithnet.io/2018/12/disabling-unauthenticated-binds-in.html"
+}

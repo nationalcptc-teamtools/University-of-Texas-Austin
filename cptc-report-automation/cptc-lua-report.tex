@@ -1,0 +1,96 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage[papersize={8.5in,11in}, margin=0.75in]{geometry}
+\usepackage{tabularx}
+\usepackage[table]{xcolor}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{ifthen}
+\usepackage{multirow}
+\usepackage{array} % For column width
+\usepackage{cellspace} % For padding
+\usepackage{colortbl}
+\usepackage{makecell}
+\usepackage{keyval}
+\usepackage{layout}
+\usepackage[none]{hyphenat}
+
+\graphicspath{{./images/}}
+
+\directlua{cptc = require("cptc")}
+
+\newcommand{\criticalcolor}{violet}
+\newcommand{\highcolor}{red}
+\newcommand{\mediumcolor}{orange}
+\newcommand{\lowcolor}{Dandelion}
+\newcommand{\infocolor}{green}
+
+\newcommand{\curcolor}{\criticalcolor}
+
+\newcommand{\cspacing}{0.5cm}
+
+\newcommand{\setcurcolor}[1]{%
+  \ifthenelse{\equal{#1}{Critical}}{\renewcommand{\curcolor}{\criticalcolor}}{%
+  \ifthenelse{\equal{#1}{High}}{\renewcommand{\curcolor}{\highcolor}}{%
+  \ifthenelse{\equal{#1}{Medium}}{\renewcommand{\curcolor}{\mediumcolor}}{%
+  \ifthenelse{\equal{#1}{Low}}{\renewcommand{\curcolor}{\lowcolor}}{%
+  \ifthenelse{\equal{#1}{Informational}}{\renewcommand{\curcolor}{\infocolor}}{%
+  \renewcommand{\curcolor}{black}}}}}%
+  }}
+
+
+\newcolumntype{V}{>{\centering\arraybackslash}m{3.25in}}
+\newcolumntype{Y}{>{\centering\arraybackslash}m{1.25in}}
+\newcolumntype{Z}{>{\centering\arraybackslash}m{1.5in}}
+
+\makeatletter
+\define@key{vulnreport}{title}{\def\vulnreport@title{#1}}
+\define@key{vulnreport}{category}{\def\vulnreport@category{#1}}
+\define@key{vulnreport}{impact}{\def\vulnreport@impact{#1}}
+\define@key{vulnreport}{likelihood}{\def\vulnreport@likelihood{#1}}
+\define@key{vulnreport}{scope}{\def\vulnreport@scope{#1}}
+\define@key{vulnreport}{description}{\def\vulnreport@description{#1}}
+\define@key{vulnreport}{impactdesc}{\def\vulnreport@impactdesc{#1}}
+\define@key{vulnreport}{confirmation}{\def\vulnreport@confirmation{#1}}
+\define@key{vulnreport}{remediation}{\def\vulnreport@remediation{#1}}
+\define@key{vulnreport}{references}{\def\vulnreport@references{#1}}
+
+\newcommand{\vulnreport}[1][]{%
+    \setkeys{vulnreport}{#1}%
+    
+    \renewcommand{\arraystretch}{2} % Adjust row height
+    \setcurcolor{\vulnreport@category}
+    
+    \begin{table}[h!]
+      \begin{tabularx}{\textwidth}{|Z|X|X|X|X|}
+        \hline
+        \rowcolor{\curcolor} & \multicolumn{4}{c|}{\begin{minipage}{5in}\vspace{0.2cm}\centering\large\textbf{\textcolor{white}{\vulnreport@title}}\vspace{0.2cm}\end{minipage}} \\
+        \arrayrulecolor{\curcolor}\cline{1-2} \arrayrulecolor{black}\cline{2-5}
+        \cellcolor{\curcolor}\multirow{-2}{*}{\textbf{\Large \textcolor{white}{\vulnreport@category}}} & \centering \textbf{Impact} & \centering \vulnreport@impact & \centering \textbf{Likelihood} &  \makecell{\centering \vulnreport@likelihood} \\
+        \hline
+        \textcolor{\curcolor}{\large\textbf{Affected Scope}} & \multicolumn{4}{l|}{\begin{minipage}{5in} \vspace{\cspacing}\vulnreport@scope\vspace{\cspacing} \end{minipage}} \\
+        \hline
+        \textcolor{\curcolor}{\large\textbf{Description}} & \multicolumn{4}{l|}{\begin{minipage}{5in} \vspace{\cspacing}\vulnreport@description\vspace{\cspacing} \end{minipage}} \\
+        \hline
+        \textcolor{\curcolor}{\large\textbf{Impact}} & \multicolumn{4}{l|}{\begin{minipage}{5in} \vspace{\cspacing}\vulnreport@impactdesc\vspace{\cspacing} \end{minipage}} \\
+        \hline
+        \textcolor{\curcolor}{\large\textbf{Confirmation}} & \multicolumn{4}{l|}{\begin{minipage}{5in} \vspace{\cspacing}\vulnreport@confirmation\vspace{\cspacing} \end{minipage}} \\
+        \hline
+        \textcolor{\curcolor}{\large\textbf{Remediation}} & \multicolumn{4}{l|}{\begin{minipage}{5in} \vspace{\cspacing}\vulnreport@remediation\vspace{\cspacing} \end{minipage}} \\
+        \hline
+        \textcolor{\curcolor}{\large\textbf{References}} & \multicolumn{4}{l|}{\begin{minipage}{5in} \vspace{\cspacing}\vulnreport@references\vspace{\cspacing} \end{minipage}} \\
+        \hline
+      \end{tabularx}
+    \end{table}
+}
+\makeatother
+
+\begin{document}
+
+\renewcommand{\arraystretch}{1.5}
+\directlua{cptc.VulnTable()}
+
+\newpage
+
+\directlua{cptc.VulnDetails()}
+
+\end{document}
