@@ -1,0 +1,14 @@
+.venv
+.vscode
+__pycache__
+*.pyc
+*.pdf
+*.aux
+*.fdb*
+*.fls
+*.out
+*.log
+*.synctex*
+*.json
+!mitre_techniques.json
+!findings/*

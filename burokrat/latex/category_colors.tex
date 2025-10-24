@@ -1,0 +1,38 @@
+\usepackage{xcolor}
+\usepackage{ifthen}
+
+\definecolor{criticalfg}{HTML}{674ea7}
+\definecolor{criticalbg}{HTML}{ede5ff}
+\definecolor{criticalboxbg}{HTML}{674ea7}
+\definecolor{highfg}{HTML}{e10018}
+\definecolor{highbg}{HTML}{fae2e2}
+\definecolor{highboxbg}{HTML}{e16567}
+\definecolor{mediumfg}{HTML}{e89a4c}
+\definecolor{mediumbg}{HTML}{faecde}
+\definecolor{mediumboxbg}{HTML}{f6b26b}
+\definecolor{lowfg}{HTML}{f4cd61}
+\definecolor{lowbg}{HTML}{fff9ee}
+\definecolor{lowboxbg}{HTML}{f4cd61}
+\definecolor{infofg}{HTML}{004c99}
+\definecolor{infobg}{HTML}{cce5ff}
+\definecolor{infoboxbg}{HTML}{5c9ae6}
+
+\newcommand{\curfgcolor}{criticalfg}
+\newcommand{\curbgcolor}{criticalbg}
+\newcommand{\curboxbgcolor}{criticalboxbg}
+
+\newcommand{\setcurcolor}[1]{%
+    \ifthenelse{\equal{#1}{4}}{\renewcommand{\curfgcolor}{criticalfg}\renewcommand{\curbgcolor}{criticalbg}\renewcommand{\curboxbgcolor}{criticalboxbg}}{%
+        \ifthenelse{\equal{#1}{3}}{\renewcommand{\curfgcolor}{highfg}\renewcommand{\curbgcolor}{highbg}\renewcommand{\curboxbgcolor}{highboxbg}}{%
+            \ifthenelse{\equal{#1}{2}}{\renewcommand{\curfgcolor}{mediumfg}\renewcommand{\curbgcolor}{mediumbg}\renewcommand{\curboxbgcolor}{mediumboxbg}}{%
+                \ifthenelse{\equal{#1}{1}}{\renewcommand{\curfgcolor}{lowfg}\renewcommand{\curbgcolor}{lowbg}\renewcommand{\curboxbgcolor}{lowboxbg}}{%
+                    \ifthenelse{\equal{#1}{0}}{\renewcommand{\curfgcolor}{infofg}\renewcommand{\curbgcolor}{infobg}\renewcommand{\curboxbgcolor}{infoboxbg}}{%
+                        \renewcommand{\curcolor}{black}}
+                }}}}
+}
+
+\definecolor{findingbackground}{HTML}{f2f2f2}
+
+
+\definecolor{codebackground}{HTML}{d9d9d9}
+\definecolor{codeborder}{HTML}{434343}

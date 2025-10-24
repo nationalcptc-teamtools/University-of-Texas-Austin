@@ -1,0 +1,31 @@
+\documentclass{article}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue,      
+    urlcolor=blue,
+    }
+    
+\graphicspath{{../images/}}
+
+\input{category_colors}
+
+\input{finding_template}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\clap{\colorbox{gray!20}{\parbox[c]{2\textwidth}{\fontfamily{phv}\selectfont\centering\textbf{\textcolor{red}{CONFIDENTIAL - DO NOT DISTRIBUTE}}}}}}
+\fancyfoot[R]{\fontfamily{phv}\selectfont\textbf{\thepage}}
+\fancyfoot[L]{}
+\renewcommand{\headrulewidth}{0pt}
+
+\begin{document}
+\include{single_finding}
+
+\end{document}

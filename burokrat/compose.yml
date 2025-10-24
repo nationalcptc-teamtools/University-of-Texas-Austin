@@ -1,0 +1,13 @@
+services:
+  burokrat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    volumes:
+      # - ./findings/images:/app/images
+      - ./findings:/app/vuln-data
+      # - ./vuln-pdfs:/app/vuln-pdfs
+      - ./config.yaml:/app/config.yaml
+    restart: unless-stopped

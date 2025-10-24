@@ -1,0 +1,27 @@
+vuln_file_prefix: ameya
+vuln_files_dir: ./vuln-data
+vuln_pdfs_dir: ./vuln-pdfs
+
+risk_levels:
+  - Low
+  - Medium
+  - High
+  - Critical
+
+impact_levels:
+  - Low
+  - Medium
+  - High
+  - Critical
+
+likelihood_levels:
+  - Low
+  - Medium
+  - High
+  - Critical
+
+latex_files_dir: ./latex
+finding_tex_file: single_finding.tex
+report_tex_file: test_finding.tex
+output_pdf: test_report.pdf
+mitre_techniques_file: mitre_techniques.json

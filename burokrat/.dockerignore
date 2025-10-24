@@ -1,0 +1,11 @@
+.venv
+.vscode
+__pycache__
+*.pyc
+*.pdf
+*.aux
+*.fdb*
+*.fls
+*.log
+*.synctex*
+.git*

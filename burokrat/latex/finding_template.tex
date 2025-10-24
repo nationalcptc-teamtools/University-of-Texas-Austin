@@ -1,0 +1,156 @@
+\usepackage[breakable,most,skins]{tcolorbox}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{tabularx}
+\usepackage{parcolumns}
+\usepackage{colortbl}
+\usepackage{keyval}
+\usepackage{graphicx}
+\usepackage{float}
+
+\tcbuselibrary{listingsutf8}
+
+\newtcolorbox[auto counter, number within=section]{fullfindingbox}[2][]{
+    breakable,
+    colback=findingbackground,
+    boxrule=0pt,
+    leftrule=3pt,
+    titlerule=3pt,
+    sharp corners,
+    width=\textwidth,
+    top=6mm, bottom=6mm, left=6mm, right=6mm,
+    title=#2,
+    #1
+}
+
+\newtcolorbox[auto counter, number within=section]{risklevelbox}[2][]{
+    enhanced,
+    colback=#2,
+    boxrule=0pt,
+    coltext=white,
+    width=2.5cm,
+    drop fuzzy shadow=black,
+    left=1mm,right=1mm,
+}
+
+\newtcolorbox[auto counter, number within=section]{codebox}[2][]{
+    colback=codebackground,
+    colframe=codeborder,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=8pt,
+}
+
+\newtcolorbox[auto counter, number within=section]{placeholderbox}[2][]{
+    colback=white,
+    colframe=codeborder,
+    width=0.75\linewidth,
+    height=3cm,
+    boxrule=1pt,
+    coltext=black,
+    drop fuzzy shadow=black,
+    left=1mm,right=1mm,
+    valign=center,
+}
+
+\makeatletter
+\define@key{vulnreport}{number}{\def\vulnreport@number{#1}}
+\define@key{vulnreport}{title}{\def\vulnreport@title{#1}}
+\define@key{vulnreport}{category}{\def\vulnreport@category{#1}}
+\define@key{vulnreport}{risk}{\def\vulnreport@risk{#1}}
+\define@key{vulnreport}{impact}{\def\vulnreport@impact{#1}}
+\define@key{vulnreport}{likelihood}{\def\vulnreport@likelihood{#1}}
+\define@key{vulnreport}{cvssscore}{\def\vulnreport@cvssscore{#1}}
+\define@key{vulnreport}{cvssvector}{\def\vulnreport@cvssvector{#1}}
+\define@key{vulnreport}{mitre}{\def\vulnreport@mitre{#1}}
+\define@key{vulnreport}{scope}{\def\vulnreport@scope{#1}}
+\define@key{vulnreport}{description}{\def\vulnreport@description{#1}}
+\define@key{vulnreport}{impactdesc}{\def\vulnreport@impactdesc{#1}}
+\define@key{vulnreport}{confirmation}{\def\vulnreport@confirmation{#1}}
+\define@key{vulnreport}{remediation}{\def\vulnreport@remediation{#1}}
+\define@key{vulnreport}{references}{\def\vulnreport@references{#1}}
+
+\newcommand{\vulnreport}[1][]{%
+    \setkeys{vulnreport}{#1}%
+
+    \setcurcolor{\vulnreport@category}
+    {\fontfamily{phv}\selectfont
+        \begin{fullfindingbox}[title=\vspace{0.4cm}\begin{tabular}{@{}p{2cm}@{}l@{}} \Large\textbf{\vulnreport@number} & \Large\textbf{\vulnreport@title} \end{tabular}\vspace{0.3cm}, colframe=\curfgcolor, colbacktitle=\curbgcolor, coltitle=\curfgcolor]{}
+            \begin{parcolumns}[nofirstindent, colwidths={1=5cm, 2=\dimexpr\textwidth-5cm}]{2}
+                \colchunk{%
+                    \begin{minipage}{4.5cm}
+                        \centering\Large\textbf{Risk}\\
+                        \begin{risklevelbox}{\curboxbgcolor}
+                            \centering \large\textbf{\vulnreport@risk}
+                        \end{risklevelbox}
+                        \vspace{0.2cm}
+                    \end{minipage}
+                }
+                \colchunk{%
+                    \begin{minipage}{\dimexpr\textwidth-7cm}
+                        \begin{tabularx}{\textwidth}{XX}
+                            \begin{minipage}{\textwidth}
+                                \large\textbf{Impact}\\
+                                \large{\vulnreport@impact}
+                            \end{minipage}
+                             &
+                            \begin{minipage}{\textwidth}
+                                \large\textbf{CVSS Score}\\
+                                \large{\vulnreport@cvssscore}
+                            \end{minipage}
+                            \\
+                             &
+                            \\
+                            \begin{minipage}{\textwidth}
+                                \large\textbf{Likelihood}\\
+                                \large{\vulnreport@likelihood}\\
+
+                            \end{minipage}
+                             &
+                            \begin{minipage}{\textwidth}
+                                \large\textbf{CVSS Vector}\\
+                                \large{\vulnreport@cvssvector}
+                            \end{minipage}
+                        \end{tabularx}
+                    \end{minipage}
+                }
+            \end{parcolumns}
+            {\large\textbf{Affected Scope}}\vspace{0.1cm}\\
+            \renewcommand{\arraystretch}{1.5}
+            \vulnreport@scope
+            \vspace{0.2cm}\\
+            {\large\textbf{Vulnerability Description}}\vspace{0.1cm}\\
+            \begin{minipage}{\linewidth}
+                \vulnreport@description
+            \end{minipage}
+            \vspace{0.2cm} \\
+            {\large\textbf{Business Impact Description}}\vspace{0.1cm}\\
+            \begin{minipage}{\linewidth}
+                \vulnreport@impactdesc
+            \end{minipage}
+            \vspace{0.2cm} \\
+            {\large\textbf{MITRE ATT\&CK}}\vspace{0.1cm}\\
+            \vulnreport@mitre
+            \\
+            {\large\textbf{Exploitation Details}}\vspace{0.1cm}\\
+            \vulnreport@confirmation
+            % \vspace{0.2cm}\\
+            {\large\textbf{Remediation}}\vspace{0.1cm}\\
+            \begin{minipage}{\linewidth}
+                \vulnreport@remediation
+            \end{minipage}
+            \vspace{0.2cm}\\
+            {\large\textbf{References}}\\
+            \vulnreport@references
+        \end{fullfindingbox}
+    }
+}
+\makeatother
+
+\newcommand{\code}[1]{\begin{codebox}{}#1\end{codebox}}
+
+\newcommand{\evidence}[3]{\vspace{-0.2cm}\begin{figure}[H]\centering\includegraphics[width=#2]{#1}\caption{#3}\label{fig:#1}\end{figure}}
+
+\newcommand{\teamname}{TEAM-01}
+
+\newcommand{\placeholder}[2]{\begin{figure}[H]\centering\begin{placeholderbox}{}\centering #1\end{placeholderbox}\vspace{-0.4cm}\caption{#2}\end{figure}}
