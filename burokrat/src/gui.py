@@ -15,6 +15,8 @@ class ReportWriterGUI:
         self.selected_finding: int = 0
         self.latex_manager = LatexManager()
         self.cur_timestep = 0
+        self.is_errored: dict[int, bool] = {}
+        self.error_message: dict[int, str] = {}
 
     def load_config(self):
         with open(resolve_path("config.yaml"), "r") as f:
@@ -61,11 +63,16 @@ class ReportWriterGUI:
                 f"{self.findings[self.selected_finding].id}.pdf",
             )
             os.makedirs(self.vuln_pdfs_dir, exist_ok=True)
-            success = self.latex_manager.generate_single_finding_pdf(
+            success, error_message = self.latex_manager.generate_single_finding_pdf(
                 self.findings[self.selected_finding], output_pdf_path
             )
             if not success:
-                st.error("Failed to generate PDF. Please check LaTeX logs.")
+                st.error(f"Failed to generate PDF")
+                self.is_errored[self.selected_finding] = True
+                self.error_message[self.selected_finding] = error_message
+            else:
+                self.is_errored[self.selected_finding] = False
+                self.error_message[self.selected_finding] = ""
 
     def get_next_finding_id(self) -> int:
         cur = 1
@@ -384,15 +391,19 @@ class ReportWriterGUI:
             ):
                 self.generate_pdf()
             if len(self.findings) > 0:
-                output_pdf_path = os.path.join(
-                    self.vuln_pdfs_dir,
-                    f"{self.findings[self.selected_finding].id}.pdf",
-                )
-                if os.path.exists(output_pdf_path):
-                    pdf_viewer(
-                        output_pdf_path,
-                        key=f"pdf-viewer-{self.selected_finding}-{self.cur_timestep}",
+                if self.is_errored.get(self.selected_finding, False):
+                    with st.expander("PDF Generation Error", expanded=True):
+                        st.code(self.error_message.get(self.selected_finding, ""))
+                else:
+                    output_pdf_path = os.path.join(
+                        self.vuln_pdfs_dir,
+                        f"{self.findings[self.selected_finding].id}.pdf",
                     )
+                    if os.path.exists(output_pdf_path):
+                        pdf_viewer(
+                            output_pdf_path,
+                            key=f"pdf-viewer-{self.selected_finding}-{self.cur_timestep}",
+                        )
         return rerun
 
 

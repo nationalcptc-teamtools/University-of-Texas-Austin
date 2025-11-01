@@ -1,0 +1,31 @@
+\usepackage[top=1in, bottom=0.6in, left=0.5in, right=0.5in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue,      
+    urlcolor=blue,
+    }
+
+\graphicspath{{../images/}}
+
+\renewcommand{\rmdefault}{phv}
+
+\input{category_colors}
+
+\input{finding_template}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\clap{\colorbox{gray!20}{\parbox[c]{2\textwidth}{\vspace{0.2cm}\centering\textbf{\textcolor{red}{CONFIDENTIAL - DO NOT DISTRIBUTE}}\vspace{0.3cm}}}}}
+\fancyfoot[R]{\textbf{\thepage}}
+\fancyfoot[L]{}
+
+\fancyhead[L]{\textbf{All Ports Tours Security Assessment}\vspace{0.2cm}}
+\fancyhead[R]{\textbf{\teamname{}}\vspace{0.2cm}}

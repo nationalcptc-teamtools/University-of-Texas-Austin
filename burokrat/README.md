@@ -1,10 +1,11 @@
 # burokrat
 
 ## Docker Compose Setup (Recommended)
+* RUN `git pull` PLEASE
 * Edit `config.yaml` with your name
 * Create local directories for volumes (if they don't exist):
-* Start the application: `docker compose up -d`
-* View logs: `docker compose logs -f`
+* Start the application: `docker compose up -d --build`
+<!-- * View logs: `docker compose logs -f` -->
 * Stop the application: `docker compose down`
 * Restart the application: `docker compose restart`
 * Access the Streamlit GUI at `http://localhost:8501`
@@ -23,6 +24,12 @@
 * `docker image prune -a` to remove all images not in use
 
 ## Using Latex
+* By default, all characters are escaped to their latex-friendly versions
+    * This disables all macros, formatting, etc.
+    * For text to be parsed as raw latex instead of plain text, enclose it within `***` (for example `... ***\teamname{}*** ...`)
+* For all command references below, the `<>` characters should not be included in the actual command
+* There is a macro for putting in the team name: `\teamname{}`
+* There is a macro for placeholder images: `\placeholder{<placeholder text>}{<placeholder caption>}`
 * There is a code macro for use in exploit details and remediation for one line commands: `\code{<command>}`
 * Can add links with `\url{<link>}` or `\href{<link>}{<text>}`
     * References section will automatically generate `href` elements from input
@@ -30,3 +37,7 @@
     * Specify relative width like `0.5\textwidth` or can specify absolute width with `1in` or `1cm` etc
     * Image file should just be the file name (don't include the directory)
     * Can use `\ref{fig:<image file>}` to get figure number to reference image
+
+## Top 3 Things That Will Prevent Your Report From Compiling
+* Your images are not properly mounted/copied over to the images folder.
+* Your name is Brendan
