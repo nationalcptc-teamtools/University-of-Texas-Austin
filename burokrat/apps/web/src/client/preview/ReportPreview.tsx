@@ -14,8 +14,9 @@ export function ReportPreview({ doc }: { doc: LoroDoc }) {
   const shaped = useMemo(
     () =>
       attempt(() => {
-        const { project, findings, report } = projectContent(json);
-        return reportInput(project, liveFindings(findings).map(findingContentOf), report);
+        const { project, findings, machines, report } = projectContent(json);
+        const contents = liveFindings(findings).map((entry) => findingContentOf(entry, machines));
+        return reportInput(project, contents, report, machines);
       }),
     [json],
   );

@@ -20,7 +20,15 @@ export const createProjectFn = createServerFn({ method: "POST" })
   .validator(projectInput)
   .handler(async ({ data }) => {
     await requireSession();
-    return createProject({ project: data, findings: {}, assets: {}, report: REPORT_TEMPLATE });
+    return createProject({
+      project: data,
+      findings: {},
+      machines: {},
+      assets: {},
+      credentials: {},
+      engage: { outOfScope: "", notes: "" },
+      report: REPORT_TEMPLATE,
+    });
   });
 
 /** Creates a project from an exported zip. */

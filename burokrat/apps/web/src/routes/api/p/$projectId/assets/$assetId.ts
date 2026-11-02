@@ -23,7 +23,7 @@ async function readLimited(request: Request, limit: number) {
   return Buffer.concat(chunks);
 }
 
-/** An image by its SHA-256, which clients compute themselves so they can use it offline. */
+/** A file by its SHA-256, which clients compute themselves so they can use it offline. */
 export const Route = createFileRoute("/api/p/$projectId/assets/$assetId")({
   server: {
     handlers: {
@@ -45,7 +45,7 @@ export const Route = createFileRoute("/api/p/$projectId/assets/$assetId")({
           return text(404, "Asset not found.");
         }
         const bytes = await readLimited(request, MAX_ASSET_BYTES);
-        if (!bytes) return text(413, "Images are limited to 10 MB.");
+        if (!bytes) return text(413, "Files are limited to 50 MB.");
         try {
           storeBlob(params.assetId, bytes);
         } catch (error) {

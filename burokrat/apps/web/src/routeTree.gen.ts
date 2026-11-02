@@ -15,13 +15,21 @@ import { Route as AuthedIndexRouteImport } from './routes/_authed/index'
 import { Route as AuthedSetupRouteImport } from './routes/_authed/setup'
 import { Route as AuthedPProjectIdRouteImport } from './routes/_authed/p.$projectId'
 import { Route as AuthedPProjectIdIndexRouteImport } from './routes/_authed/p.$projectId/index'
+import { Route as AuthedPProjectIdEngageRouteImport } from './routes/_authed/p.$projectId/engage'
 import { Route as AuthedPProjectIdReportRouteImport } from './routes/_authed/p.$projectId/report'
 import { Route as ApiPProjectIdExportDotzipRouteImport } from './routes/api/p/$projectId/export[.]zip'
+import { Route as ApiPProjectIdReportTypstDotzipRouteImport } from './routes/api/p/$projectId/report-typst[.]zip'
 import { Route as ApiPProjectIdReportDotpdfRouteImport } from './routes/api/p/$projectId/report[.]pdf'
+import { Route as AuthedPProjectIdEngageIndexRouteImport } from './routes/_authed/p.$projectId/engage/index'
+import { Route as AuthedPProjectIdEngageFilesRouteImport } from './routes/_authed/p.$projectId/engage/files'
+import { Route as AuthedPProjectIdEngageMachinesRouteImport } from './routes/_authed/p.$projectId/engage/machines'
+import { Route as AuthedPProjectIdEngageNotesRouteImport } from './routes/_authed/p.$projectId/engage/notes'
+import { Route as AuthedPProjectIdEngageServicesRouteImport } from './routes/_authed/p.$projectId/engage/services'
 import { Route as AuthedPProjectIdFFindingIdRouteImport } from './routes/_authed/p.$projectId/f.$findingId'
 import { Route as ApiPProjectIdAssetsAssetIdRouteImport } from './routes/api/p/$projectId/assets/$assetId'
 import { Route as ApiPProjectIdFindingsChar123findingIdChar125DotjsonRouteImport } from './routes/api/p/$projectId/findings/{$findingId}[.]json'
 import { Route as ApiPProjectIdFindingsChar123findingIdChar125DotpdfRouteImport } from './routes/api/p/$projectId/findings/{$findingId}[.]pdf'
+import { Route as AuthedPProjectIdEngageMMachineIdRouteImport } from './routes/_authed/p.$projectId/engage/m.$machineId'
 
 const AuthedRoute = AuthedRouteImport.update({
   id: '/_authed',
@@ -52,6 +60,11 @@ const AuthedPProjectIdIndexRoute = AuthedPProjectIdIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthedPProjectIdRoute,
 } as any)
+const AuthedPProjectIdEngageRoute = AuthedPProjectIdEngageRouteImport.update({
+  id: '/engage',
+  path: '/engage',
+  getParentRoute: () => AuthedPProjectIdRoute,
+} as any)
 const AuthedPProjectIdReportRoute = AuthedPProjectIdReportRouteImport.update({
   id: '/report',
   path: '/report',
@@ -63,11 +76,47 @@ const ApiPProjectIdExportDotzipRoute =
     path: '/api/p/$projectId/export.zip',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPProjectIdReportTypstDotzipRoute =
+  ApiPProjectIdReportTypstDotzipRouteImport.update({
+    id: '/api/p/$projectId/report-typst.zip',
+    path: '/api/p/$projectId/report-typst.zip',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPProjectIdReportDotpdfRoute =
   ApiPProjectIdReportDotpdfRouteImport.update({
     id: '/api/p/$projectId/report.pdf',
     path: '/api/p/$projectId/report.pdf',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthedPProjectIdEngageIndexRoute =
+  AuthedPProjectIdEngageIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthedPProjectIdEngageRoute,
+  } as any)
+const AuthedPProjectIdEngageFilesRoute =
+  AuthedPProjectIdEngageFilesRouteImport.update({
+    id: '/files',
+    path: '/files',
+    getParentRoute: () => AuthedPProjectIdEngageRoute,
+  } as any)
+const AuthedPProjectIdEngageMachinesRoute =
+  AuthedPProjectIdEngageMachinesRouteImport.update({
+    id: '/machines',
+    path: '/machines',
+    getParentRoute: () => AuthedPProjectIdEngageRoute,
+  } as any)
+const AuthedPProjectIdEngageNotesRoute =
+  AuthedPProjectIdEngageNotesRouteImport.update({
+    id: '/notes',
+    path: '/notes',
+    getParentRoute: () => AuthedPProjectIdEngageRoute,
+  } as any)
+const AuthedPProjectIdEngageServicesRoute =
+  AuthedPProjectIdEngageServicesRouteImport.update({
+    id: '/services',
+    path: '/services',
+    getParentRoute: () => AuthedPProjectIdEngageRoute,
   } as any)
 const AuthedPProjectIdFFindingIdRoute =
   AuthedPProjectIdFFindingIdRouteImport.update({
@@ -93,20 +142,34 @@ const ApiPProjectIdFindingsChar123findingIdChar125DotpdfRoute =
     path: '/api/p/$projectId/findings/{$findingId}.pdf',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthedPProjectIdEngageMMachineIdRoute =
+  AuthedPProjectIdEngageMMachineIdRouteImport.update({
+    id: '/m/$machineId',
+    path: '/m/$machineId',
+    getParentRoute: () => AuthedPProjectIdEngageRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthedIndexRoute
   '/login': typeof LoginRoute
   '/setup': typeof AuthedSetupRoute
   '/p/$projectId': typeof AuthedPProjectIdRouteWithChildren
+  '/p/$projectId/engage': typeof AuthedPProjectIdEngageRouteWithChildren
   '/p/$projectId/report': typeof AuthedPProjectIdReportRoute
   '/api/p/$projectId/export.zip': typeof ApiPProjectIdExportDotzipRoute
+  '/api/p/$projectId/report-typst.zip': typeof ApiPProjectIdReportTypstDotzipRoute
   '/api/p/$projectId/report.pdf': typeof ApiPProjectIdReportDotpdfRoute
   '/p/$projectId/': typeof AuthedPProjectIdIndexRoute
+  '/p/$projectId/engage/files': typeof AuthedPProjectIdEngageFilesRoute
+  '/p/$projectId/engage/machines': typeof AuthedPProjectIdEngageMachinesRoute
+  '/p/$projectId/engage/notes': typeof AuthedPProjectIdEngageNotesRoute
+  '/p/$projectId/engage/services': typeof AuthedPProjectIdEngageServicesRoute
   '/p/$projectId/f/$findingId': typeof AuthedPProjectIdFFindingIdRoute
   '/api/p/$projectId/assets/$assetId': typeof ApiPProjectIdAssetsAssetIdRoute
   '/api/p/$projectId/findings/{$findingId}.json': typeof ApiPProjectIdFindingsChar123findingIdChar125DotjsonRoute
   '/api/p/$projectId/findings/{$findingId}.pdf': typeof ApiPProjectIdFindingsChar123findingIdChar125DotpdfRoute
+  '/p/$projectId/engage/': typeof AuthedPProjectIdEngageIndexRoute
+  '/p/$projectId/engage/m/$machineId': typeof AuthedPProjectIdEngageMMachineIdRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -114,12 +177,19 @@ export interface FileRoutesByTo {
   '/': typeof AuthedIndexRoute
   '/p/$projectId/report': typeof AuthedPProjectIdReportRoute
   '/api/p/$projectId/export.zip': typeof ApiPProjectIdExportDotzipRoute
+  '/api/p/$projectId/report-typst.zip': typeof ApiPProjectIdReportTypstDotzipRoute
   '/api/p/$projectId/report.pdf': typeof ApiPProjectIdReportDotpdfRoute
   '/p/$projectId': typeof AuthedPProjectIdIndexRoute
+  '/p/$projectId/engage/files': typeof AuthedPProjectIdEngageFilesRoute
+  '/p/$projectId/engage/machines': typeof AuthedPProjectIdEngageMachinesRoute
+  '/p/$projectId/engage/notes': typeof AuthedPProjectIdEngageNotesRoute
+  '/p/$projectId/engage/services': typeof AuthedPProjectIdEngageServicesRoute
   '/p/$projectId/f/$findingId': typeof AuthedPProjectIdFFindingIdRoute
   '/api/p/$projectId/assets/$assetId': typeof ApiPProjectIdAssetsAssetIdRoute
   '/api/p/$projectId/findings/{$findingId}.json': typeof ApiPProjectIdFindingsChar123findingIdChar125DotjsonRoute
   '/api/p/$projectId/findings/{$findingId}.pdf': typeof ApiPProjectIdFindingsChar123findingIdChar125DotpdfRoute
+  '/p/$projectId/engage': typeof AuthedPProjectIdEngageIndexRoute
+  '/p/$projectId/engage/m/$machineId': typeof AuthedPProjectIdEngageMMachineIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -128,14 +198,22 @@ export interface FileRoutesById {
   '/_authed/setup': typeof AuthedSetupRoute
   '/_authed/': typeof AuthedIndexRoute
   '/_authed/p/$projectId': typeof AuthedPProjectIdRouteWithChildren
+  '/_authed/p/$projectId/engage': typeof AuthedPProjectIdEngageRouteWithChildren
   '/_authed/p/$projectId/report': typeof AuthedPProjectIdReportRoute
   '/api/p/$projectId/export.zip': typeof ApiPProjectIdExportDotzipRoute
+  '/api/p/$projectId/report-typst.zip': typeof ApiPProjectIdReportTypstDotzipRoute
   '/api/p/$projectId/report.pdf': typeof ApiPProjectIdReportDotpdfRoute
   '/_authed/p/$projectId/': typeof AuthedPProjectIdIndexRoute
+  '/_authed/p/$projectId/engage/files': typeof AuthedPProjectIdEngageFilesRoute
+  '/_authed/p/$projectId/engage/machines': typeof AuthedPProjectIdEngageMachinesRoute
+  '/_authed/p/$projectId/engage/notes': typeof AuthedPProjectIdEngageNotesRoute
+  '/_authed/p/$projectId/engage/services': typeof AuthedPProjectIdEngageServicesRoute
   '/_authed/p/$projectId/f/$findingId': typeof AuthedPProjectIdFFindingIdRoute
   '/api/p/$projectId/assets/$assetId': typeof ApiPProjectIdAssetsAssetIdRoute
   '/api/p/$projectId/findings/{$findingId}.json': typeof ApiPProjectIdFindingsChar123findingIdChar125DotjsonRoute
   '/api/p/$projectId/findings/{$findingId}.pdf': typeof ApiPProjectIdFindingsChar123findingIdChar125DotpdfRoute
+  '/_authed/p/$projectId/engage/': typeof AuthedPProjectIdEngageIndexRoute
+  '/_authed/p/$projectId/engage/m/$machineId': typeof AuthedPProjectIdEngageMMachineIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -144,14 +222,22 @@ export interface FileRouteTypes {
     | '/login'
     | '/setup'
     | '/p/$projectId'
+    | '/p/$projectId/engage'
     | '/p/$projectId/report'
     | '/api/p/$projectId/export.zip'
+    | '/api/p/$projectId/report-typst.zip'
     | '/api/p/$projectId/report.pdf'
     | '/p/$projectId/'
+    | '/p/$projectId/engage/files'
+    | '/p/$projectId/engage/machines'
+    | '/p/$projectId/engage/notes'
+    | '/p/$projectId/engage/services'
     | '/p/$projectId/f/$findingId'
     | '/api/p/$projectId/assets/$assetId'
     | '/api/p/$projectId/findings/{$findingId}.json'
     | '/api/p/$projectId/findings/{$findingId}.pdf'
+    | '/p/$projectId/engage/'
+    | '/p/$projectId/engage/m/$machineId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -159,12 +245,19 @@ export interface FileRouteTypes {
     | '/'
     | '/p/$projectId/report'
     | '/api/p/$projectId/export.zip'
+    | '/api/p/$projectId/report-typst.zip'
     | '/api/p/$projectId/report.pdf'
     | '/p/$projectId'
+    | '/p/$projectId/engage/files'
+    | '/p/$projectId/engage/machines'
+    | '/p/$projectId/engage/notes'
+    | '/p/$projectId/engage/services'
     | '/p/$projectId/f/$findingId'
     | '/api/p/$projectId/assets/$assetId'
     | '/api/p/$projectId/findings/{$findingId}.json'
     | '/api/p/$projectId/findings/{$findingId}.pdf'
+    | '/p/$projectId/engage'
+    | '/p/$projectId/engage/m/$machineId'
   id:
     | '__root__'
     | '/_authed'
@@ -172,20 +265,29 @@ export interface FileRouteTypes {
     | '/_authed/setup'
     | '/_authed/'
     | '/_authed/p/$projectId'
+    | '/_authed/p/$projectId/engage'
     | '/_authed/p/$projectId/report'
     | '/api/p/$projectId/export.zip'
+    | '/api/p/$projectId/report-typst.zip'
     | '/api/p/$projectId/report.pdf'
     | '/_authed/p/$projectId/'
+    | '/_authed/p/$projectId/engage/files'
+    | '/_authed/p/$projectId/engage/machines'
+    | '/_authed/p/$projectId/engage/notes'
+    | '/_authed/p/$projectId/engage/services'
     | '/_authed/p/$projectId/f/$findingId'
     | '/api/p/$projectId/assets/$assetId'
     | '/api/p/$projectId/findings/{$findingId}.json'
     | '/api/p/$projectId/findings/{$findingId}.pdf'
+    | '/_authed/p/$projectId/engage/'
+    | '/_authed/p/$projectId/engage/m/$machineId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AuthedRoute: typeof AuthedRouteWithChildren
   LoginRoute: typeof LoginRoute
   ApiPProjectIdExportDotzipRoute: typeof ApiPProjectIdExportDotzipRoute
+  ApiPProjectIdReportTypstDotzipRoute: typeof ApiPProjectIdReportTypstDotzipRoute
   ApiPProjectIdReportDotpdfRoute: typeof ApiPProjectIdReportDotpdfRoute
   ApiPProjectIdAssetsAssetIdRoute: typeof ApiPProjectIdAssetsAssetIdRoute
   ApiPProjectIdFindingsChar123findingIdChar125DotjsonRoute: typeof ApiPProjectIdFindingsChar123findingIdChar125DotjsonRoute
@@ -236,6 +338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedPProjectIdIndexRouteImport
       parentRoute: typeof AuthedPProjectIdRoute
     }
+    '/_authed/p/$projectId/engage': {
+      id: '/_authed/p/$projectId/engage'
+      path: '/engage'
+      fullPath: '/p/$projectId/engage'
+      preLoaderRoute: typeof AuthedPProjectIdEngageRouteImport
+      parentRoute: typeof AuthedPProjectIdRoute
+    }
     '/_authed/p/$projectId/report': {
       id: '/_authed/p/$projectId/report'
       path: '/report'
@@ -250,12 +359,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPProjectIdExportDotzipRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/p/$projectId/report-typst.zip': {
+      id: '/api/p/$projectId/report-typst.zip'
+      path: '/api/p/$projectId/report-typst.zip'
+      fullPath: '/api/p/$projectId/report-typst.zip'
+      preLoaderRoute: typeof ApiPProjectIdReportTypstDotzipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/p/$projectId/report.pdf': {
       id: '/api/p/$projectId/report.pdf'
       path: '/api/p/$projectId/report.pdf'
       fullPath: '/api/p/$projectId/report.pdf'
       preLoaderRoute: typeof ApiPProjectIdReportDotpdfRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authed/p/$projectId/engage/': {
+      id: '/_authed/p/$projectId/engage/'
+      path: '/'
+      fullPath: '/p/$projectId/engage/'
+      preLoaderRoute: typeof AuthedPProjectIdEngageIndexRouteImport
+      parentRoute: typeof AuthedPProjectIdEngageRoute
+    }
+    '/_authed/p/$projectId/engage/files': {
+      id: '/_authed/p/$projectId/engage/files'
+      path: '/files'
+      fullPath: '/p/$projectId/engage/files'
+      preLoaderRoute: typeof AuthedPProjectIdEngageFilesRouteImport
+      parentRoute: typeof AuthedPProjectIdEngageRoute
+    }
+    '/_authed/p/$projectId/engage/machines': {
+      id: '/_authed/p/$projectId/engage/machines'
+      path: '/machines'
+      fullPath: '/p/$projectId/engage/machines'
+      preLoaderRoute: typeof AuthedPProjectIdEngageMachinesRouteImport
+      parentRoute: typeof AuthedPProjectIdEngageRoute
+    }
+    '/_authed/p/$projectId/engage/notes': {
+      id: '/_authed/p/$projectId/engage/notes'
+      path: '/notes'
+      fullPath: '/p/$projectId/engage/notes'
+      preLoaderRoute: typeof AuthedPProjectIdEngageNotesRouteImport
+      parentRoute: typeof AuthedPProjectIdEngageRoute
+    }
+    '/_authed/p/$projectId/engage/services': {
+      id: '/_authed/p/$projectId/engage/services'
+      path: '/services'
+      fullPath: '/p/$projectId/engage/services'
+      preLoaderRoute: typeof AuthedPProjectIdEngageServicesRouteImport
+      parentRoute: typeof AuthedPProjectIdEngageRoute
     }
     '/_authed/p/$projectId/f/$findingId': {
       id: '/_authed/p/$projectId/f/$findingId'
@@ -285,16 +436,50 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPProjectIdFindingsChar123findingIdChar125DotpdfRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authed/p/$projectId/engage/m/$machineId': {
+      id: '/_authed/p/$projectId/engage/m/$machineId'
+      path: '/m/$machineId'
+      fullPath: '/p/$projectId/engage/m/$machineId'
+      preLoaderRoute: typeof AuthedPProjectIdEngageMMachineIdRouteImport
+      parentRoute: typeof AuthedPProjectIdEngageRoute
+    }
   }
 }
 
+interface AuthedPProjectIdEngageRouteChildren {
+  AuthedPProjectIdEngageFilesRoute: typeof AuthedPProjectIdEngageFilesRoute
+  AuthedPProjectIdEngageMachinesRoute: typeof AuthedPProjectIdEngageMachinesRoute
+  AuthedPProjectIdEngageNotesRoute: typeof AuthedPProjectIdEngageNotesRoute
+  AuthedPProjectIdEngageServicesRoute: typeof AuthedPProjectIdEngageServicesRoute
+  AuthedPProjectIdEngageIndexRoute: typeof AuthedPProjectIdEngageIndexRoute
+  AuthedPProjectIdEngageMMachineIdRoute: typeof AuthedPProjectIdEngageMMachineIdRoute
+}
+
+const AuthedPProjectIdEngageRouteChildren: AuthedPProjectIdEngageRouteChildren =
+  {
+    AuthedPProjectIdEngageFilesRoute: AuthedPProjectIdEngageFilesRoute,
+    AuthedPProjectIdEngageMachinesRoute: AuthedPProjectIdEngageMachinesRoute,
+    AuthedPProjectIdEngageNotesRoute: AuthedPProjectIdEngageNotesRoute,
+    AuthedPProjectIdEngageServicesRoute: AuthedPProjectIdEngageServicesRoute,
+    AuthedPProjectIdEngageIndexRoute: AuthedPProjectIdEngageIndexRoute,
+    AuthedPProjectIdEngageMMachineIdRoute:
+      AuthedPProjectIdEngageMMachineIdRoute,
+  }
+
+const AuthedPProjectIdEngageRouteWithChildren =
+  AuthedPProjectIdEngageRoute._addFileChildren(
+    AuthedPProjectIdEngageRouteChildren,
+  )
+
 interface AuthedPProjectIdRouteChildren {
+  AuthedPProjectIdEngageRoute: typeof AuthedPProjectIdEngageRouteWithChildren
   AuthedPProjectIdReportRoute: typeof AuthedPProjectIdReportRoute
   AuthedPProjectIdIndexRoute: typeof AuthedPProjectIdIndexRoute
   AuthedPProjectIdFFindingIdRoute: typeof AuthedPProjectIdFFindingIdRoute
 }
 
 const AuthedPProjectIdRouteChildren: AuthedPProjectIdRouteChildren = {
+  AuthedPProjectIdEngageRoute: AuthedPProjectIdEngageRouteWithChildren,
   AuthedPProjectIdReportRoute: AuthedPProjectIdReportRoute,
   AuthedPProjectIdIndexRoute: AuthedPProjectIdIndexRoute,
   AuthedPProjectIdFFindingIdRoute: AuthedPProjectIdFFindingIdRoute,
@@ -322,6 +507,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthedRoute: AuthedRouteWithChildren,
   LoginRoute: LoginRoute,
   ApiPProjectIdExportDotzipRoute: ApiPProjectIdExportDotzipRoute,
+  ApiPProjectIdReportTypstDotzipRoute: ApiPProjectIdReportTypstDotzipRoute,
   ApiPProjectIdReportDotpdfRoute: ApiPProjectIdReportDotpdfRoute,
   ApiPProjectIdAssetsAssetIdRoute: ApiPProjectIdAssetsAssetIdRoute,
   ApiPProjectIdFindingsChar123findingIdChar125DotjsonRoute:

@@ -6,6 +6,7 @@ import {
   liveFindings,
   projectContent,
   projectDocSchema,
+  type MachineEntry,
   type ProjectContent,
 } from "./content.ts";
 import { createProjectDoc, writeFinding } from "./docs.ts";
@@ -14,16 +15,45 @@ import { FINDING_TEMPLATES } from "./finding-templates.ts";
 import { REPORT_TEMPLATE } from "./templates.ts";
 
 const PNG = "a".repeat(64);
+const DC = "mmmmmmmmmmmmmmmmmmmm1";
 const meta = { owner: "Alice", createdBy: "Alice", createdAt: 1_000, deleted: false };
 const finding = {
   ...FINDING_TEMPLATES.find((template) => template.title === "MS17-010 (EternalBlue)")!,
   images: [{ assetId: PNG, name: "shot.png", caption: "Proof" }],
+  targets: { [DC]: { "445/tcp": true as const } },
+  ...meta,
+};
+const machine: MachineEntry = {
+  ip: "10.0.0.23",
+  hostname: "dc01",
+  os: "Windows Server 2019",
+  status: "foothold",
+  scope: "in",
+  scopeNote: "",
+  claimedAt: 0,
+  services: {
+    "445/tcp": { name: "smb", product: "Microsoft Windows SMB", note: "" },
+    "88/tcp": { name: "kerberos", product: "", note: "" },
+  },
+  notes: "Signing not required",
   ...meta,
 };
 const content: ProjectContent = {
   project: { name: "Engagement", companyName: "Acme", teamName: "Blue" },
   findings: { aaaaaaaaaaaaaaaaaaaa1: finding },
-  assets: { [PNG]: { name: "shot.png", createdBy: "Alice", createdAt: 900 } },
+  machines: { [DC]: machine },
+  assets: {
+    [PNG]: {
+      name: "shot.png",
+      type: "image/png",
+      size: 10,
+      machines: { [DC]: true },
+      createdBy: "Alice",
+      createdAt: 900,
+    },
+  },
+  credentials: {},
+  engage: { outOfScope: "", notes: "" },
   report: REPORT_TEMPLATE,
 };
 
@@ -39,7 +69,7 @@ it("round-trips project content through a doc", () => {
 });
 
 it("reads a project with no findings or images", () => {
-  const empty = { ...content, findings: {}, assets: {} };
+  const empty = { ...content, findings: {}, machines: {}, assets: {} };
   expect(projectContent(createProjectDoc(empty).toJSON())).toEqual(empty);
 });
 
@@ -91,6 +121,45 @@ it("merges findings added offline on two devices, and edits to one finding", () 
   const first = merged.findings["aaaaaaaaaaaaaaaaaaaa1"]!;
   expect(first.references.map((r) => r.name)).toEqual([finding.references[0]!.name, "A"]);
   expect(first.cvss.AT).toBe("N");
-  expect(findingContentOf(first).title).toBe(finding.title);
+  expect(findingContentOf(first, merged.machines).title).toBe(finding.title);
   expect(bob.toJSON()).toEqual(alice.toJSON());
+});
+
+it("writes a finding's targets as scope rows of the machine as it is now", () => {
+  const renamed = { ...machine, hostname: "dc02", services: { ...machine.services } };
+  const { scope } = findingContentOf(finding, { [DC]: renamed });
+  expect(scope[0]).toEqual({
+    ip: "10.0.0.23",
+    name: "dc02",
+    services: [{ name: "smb", port: "TCP/445" }],
+  });
+  expect(scope.slice(1)).toEqual(finding.scope);
+  expect(findingContentOf(finding, { [DC]: { ...machine, deleted: true } }).scope).toEqual(
+    finding.scope,
+  );
+});
+
+it("merges services two devices add to one machine, by port", () => {
+  const server = createProjectDoc(content);
+  const [alice, bob] = [copyOf(server), copyOf(server)];
+  for (const [doc, name] of [
+    [alice, "SMB"],
+    [bob, "microsoft-ds"],
+  ] as const) {
+    const mirror = new Mirror({ doc, schema: projectMirrorSchema });
+    mirror.setState((state) => {
+      state.machines[DC]!.services["139/tcp"] = { name, product: "", note: "" };
+    });
+  }
+  exchange(alice, bob);
+  const merged = projectContent(alice.toJSON()).machines[DC]!;
+  expect(Object.keys(merged.services).sort()).toEqual(["139/tcp", "445/tcp", "88/tcp"]);
+});
+
+it("reads machines saved before scope notes and claims", () => {
+  const doc = createProjectDoc(content);
+  const saved = doc.getMap("machines").get(DC) as LoroMap;
+  saved.delete("scopeNote");
+  saved.delete("claimedAt");
+  expect(projectContent(doc.toJSON())).toEqual(content);
 });

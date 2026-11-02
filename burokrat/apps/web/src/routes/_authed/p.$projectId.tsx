@@ -1,10 +1,11 @@
 import { Empty, Sidebar } from "@cloudflare/kumo";
 import { createFileRoute, notFound, Outlet, useLocation } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { projectsCollection } from "../../client/collections.ts";
 import { DocLoading } from "../../client/components/DocLoading.tsx";
+import { ProjectPalette } from "../../client/components/ProjectPalette.tsx";
 import { ProjectSidebar } from "../../client/components/ProjectSidebar.tsx";
-import { cacheProjectImages, uploadPendingImages } from "../../client/images.ts";
+import { cacheProjectImages, uploadPendingFiles } from "../../client/files.ts";
 import {
   ProjectSessionContext,
   useProjectDoc,
@@ -56,13 +57,14 @@ function ProjectShell({ userName }: { userName: string }) {
   const page = useLocation({ select: (location) => location.pathname });
   const everyone = useProjectPresence(session.presence, { name: userName, page });
   const online = useOnline();
+  const [searching, setSearching] = useState(false);
   const others = online ? everyone : [];
 
   useEffect(
     () =>
       syncClient().onStatusChange((status) => {
         if (status === "connected")
-          void uploadPendingImages().then(() => cacheProjectImages(session));
+          void uploadPendingFiles().then(() => cacheProjectImages(session));
       }),
     [session],
   );
@@ -77,10 +79,11 @@ function ProjectShell({ userName }: { userName: string }) {
       className="h-screen"
     >
       <ProjectViewers value={{ others, page }}>
-        <ProjectSidebar userName={userName} />
+        <ProjectSidebar userName={userName} onSearch={() => setSearching(true)} />
         <main className="relative flex min-w-0 flex-1 flex-col overflow-y-auto">
           <Outlet />
         </main>
+        <ProjectPalette open={searching} onOpenChange={setSearching} />
       </ProjectViewers>
     </Sidebar.Provider>
   );

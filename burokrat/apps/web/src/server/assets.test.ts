@@ -32,13 +32,13 @@ beforeAll(() => {
 });
 
 describe("storeBlob", () => {
-  it("accepts images by their magic bytes and rejects the rest", () => {
+  it("accepts any file up to the size limit", () => {
     const sha256 = store(PNG);
     expect(readBlob(sha256)?.equals(PNG)).toBe(true);
-    const svg = Buffer.from("<svg/>");
-    expect(() => storeBlob(sha256Of(svg), svg)).toThrow("Only PNG, JPEG and GIF");
+    const dump = Buffer.from("Administrator:500:aad3b435b51404ee:::");
+    expect(readBlob(store(dump))?.equals(dump)).toBe(true);
     const big = Buffer.concat([PNG, Buffer.alloc(MAX_ASSET_BYTES)]);
-    expect(() => storeBlob(sha256Of(big), big)).toThrow("10 MB");
+    expect(() => storeBlob(sha256Of(big), big)).toThrow("50 MB");
   });
 
   it("rejects bytes that do not match the hash they are stored under", () => {
@@ -55,13 +55,25 @@ describe("storeBlob", () => {
 });
 
 describe("collectOrphanedBlobs", () => {
-  it("keeps every image a project holds or shows, and drops old unused ones", () => {
+  it("keeps every file a project holds or shows, and drops old unused ones", () => {
     const [kept, logo, dropped] = [PNG, LOGO_PNG, OTHER_PNG].map(store);
     const report = { ...REPORT_TEMPLATE, cover: { ...REPORT_TEMPLATE.cover, logoAssetId: logo! } };
     createProject({
       project: { name: "Test", companyName: "", teamName: "" },
       findings: {},
-      assets: { [kept!]: { name: "kept.png", createdBy: "Alice", createdAt: 0 } },
+      machines: {},
+      assets: {
+        [kept!]: {
+          name: "kept.png",
+          type: "image/png",
+          size: 1,
+          machines: {},
+          createdBy: "Alice",
+          createdAt: 0,
+        },
+      },
+      credentials: {},
+      engage: { outOfScope: "", notes: "" },
       report,
     });
 

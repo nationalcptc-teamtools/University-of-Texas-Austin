@@ -12,6 +12,7 @@ import { MitreField } from "./MitreField.tsx";
 import { ReferenceFields } from "./ReferenceFields.tsx";
 import { RiskFields } from "./RiskFields.tsx";
 import { ScopeFields } from "./ScopeFields.tsx";
+import { TargetFields } from "./TargetFields.tsx";
 import { useUpdateFinding } from "./use-finding-store.ts";
 
 const PLACEHOLDERS: Partial<Record<FindingProse, string>> = {
@@ -52,6 +53,7 @@ export function FindingEditor({ findingId, finding, userName }: Props) {
         <CvssFields finding={finding} update={update} />
       </Section>
       <Section title="Scope" anchor="scope">
+        <TargetFields finding={finding} update={update} />
         <ScopeFields finding={finding} update={update} />
       </Section>
       <Section title="Images">

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { assetUrl } from "../collections.ts";
 import { MoveButtons } from "../components/MoveButtons.tsx";
 import { SyncedInput } from "../editors/SyncedInput.tsx";
-import { addImageFile } from "../images.ts";
+import { addImageFile } from "../files.ts";
 import { useProjectSession } from "../project-session.ts";
 import { toasts } from "../toasts.ts";
 import { AssetPicker, type Asset } from "./AssetPicker.tsx";

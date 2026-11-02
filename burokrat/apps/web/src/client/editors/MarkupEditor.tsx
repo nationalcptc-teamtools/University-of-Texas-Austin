@@ -70,6 +70,8 @@ type Props = {
   userName: string;
   label: string;
   placeholder?: string;
+  /** Plain text, as notes are: no Typst highlighting or formatting keys. */
+  plain?: boolean;
   /** Takes a pasted image and resolves to the name `#image` shows it by. */
   onPasteImage?: (file: File) => Promise<string | undefined>;
 };
@@ -82,6 +84,7 @@ export function MarkupEditor({
   userName,
   label,
   placeholder,
+  plain = false,
   onPasteImage,
 }: Props) {
   const parent = useRef<HTMLDivElement>(null);
@@ -96,7 +99,7 @@ export function MarkupEditor({
       state: EditorState.create({
         doc: text().toString(),
         extensions: [
-          formatKeymap,
+          plain ? [] : formatKeymap,
           keymap.of(defaultKeymap),
           EditorView.lineWrapping,
           EditorView.contentAttributes.of({ "aria-labelledby": labelId }),
@@ -118,7 +121,7 @@ export function MarkupEditor({
             },
           }),
           theme,
-          typst,
+          plain ? [] : typst,
           loroSync(doc, text, originOf(unit)),
           loroUndo(doc, undo.get(unit), text),
           loroCursors(doc, presence, unit, userName, text),
@@ -126,7 +129,7 @@ export function MarkupEditor({
       }),
     });
     return () => view.destroy();
-  }, [session, unit, userName, labelId, placeholder]);
+  }, [session, unit, userName, labelId, placeholder, plain]);
 
   return (
     <div className="flex flex-col gap-1.5">

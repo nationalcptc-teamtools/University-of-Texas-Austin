@@ -9,14 +9,14 @@ import { Mirror } from "loro-mirror";
 import { createRoot } from "react-dom/client";
 import { expect, test, vi } from "vite-plus/test";
 import { page, userEvent } from "vite-plus/test/browser";
-import type * as Images from "../images.ts";
+import type * as Images from "../files.ts";
 import { Presence } from "../presence.ts";
 import { ProjectSessionContext, type ProjectSession } from "../project-session.ts";
 import { UndoRegistry } from "../undo-registry.ts";
 import { FindingEditor } from "./FindingEditor.tsx";
 import { useFinding } from "./use-finding-store.ts";
 
-vi.mock("../images.ts", async (importOriginal) => ({
+vi.mock("../files.ts", async (importOriginal) => ({
   ...(await importOriginal<typeof Images>()),
   addImageFile: async () => "a".repeat(64),
 }));
@@ -30,13 +30,17 @@ function linkedSessions(): ProjectSession[] {
     findings: {
       [FINDING_ID]: {
         ...BLANK_FINDING,
+        targets: {},
         owner: "Alice",
         createdBy: "Alice",
         createdAt: 0,
         deleted: false,
       },
     },
+    machines: {},
     assets: {},
+    credentials: {},
+    engage: { outOfScope: "", notes: "" },
     report: REPORT_TEMPLATE,
   });
   const second = new LoroDoc();

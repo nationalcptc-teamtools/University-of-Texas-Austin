@@ -9,6 +9,8 @@
   team: data.team,
   findings-count: findings-count(),
   risk-matrix: risk-matrix(),
+  hosts-table: hosts-table(),
+  services-table: services-table(),
   risk-definitions: risk-definitions(),
   image: (name, width: 60%, caption: auto) => {
     let found = images.at(name, default: none)

@@ -91,7 +91,9 @@
 #let table-header = rgb("#1f2433")
 #let table-label = luma(242)
 
-#let framed(body) = box(stroke: 3pt + luma(205), radius: 4pt, clip: true, body)
+#let frame = (stroke: 3pt + luma(205), radius: 4pt, clip: true)
+
+#let framed(body) = box(..frame, body)
 
 #let level-cell(category, label: none) = table.cell(
   fill: risk-colors.at(category).box,
@@ -141,6 +143,54 @@
     kind: image,
     caption: [Matrix for Determining Risk Levels],
   )
+}
+
+// A table as wide as the page that breaks across pages, its header row repeating.
+#let long-table(caption, columns, header, rows) = {
+  show figure: set block(breakable: true)
+  figure(
+    block(..frame, breakable: true, report-table(
+      columns: columns,
+      align: left + horizon,
+      table.header(..header.map(header-cell)),
+      ..rows,
+    )),
+    kind: image,
+    caption: caption,
+  )
+}
+
+#let or-na(value) = if value == "" { "N/A" } else { value }
+
+#let hosts-table() = if data.hosts.len() == 0 { [N/A] } else {
+  long-table(
+    [Hosts in Scope],
+    (1.2fr, 1.5fr, 1.5fr, 2fr),
+    ([IP address], [Hostname], [Operating system], [Ports]),
+    data.hosts.map(h => (
+      h.ip,
+      or-na(h.hostname),
+      or-na(h.os),
+      if h.services.len() == 0 { "N/A" } else { h.services.map(s => s.port).join(", ") },
+    )).flatten(),
+  )
+}
+
+#let services-table() = {
+  let rows = data.hosts.map(h => h.services.map(s => (
+    [#h.ip \ #text(size: 9pt, if h.hostname == "" { "N/A" } else { "(" + h.hostname + ")" })],
+    s.port,
+    or-na(s.name),
+    or-na(s.product),
+  ))).flatten()
+  if rows.len() == 0 { [N/A] } else {
+    long-table(
+      [Services in Scope],
+      (2fr, 1fr, 1.5fr, 2.5fr),
+      ([Host], [Port], [Service], [Version]),
+      rows,
+    )
+  }
 }
 
 #let definition-table(name, rows) = framed(report-table(

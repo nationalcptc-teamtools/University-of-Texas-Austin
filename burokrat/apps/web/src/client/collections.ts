@@ -26,3 +26,5 @@ export const findingJsonUrl = (projectId: string, findingId: string) =>
   `/api/p/${projectId}/findings/${findingId}.json`;
 
 export const reportPdfUrl = (projectId: string) => `/api/p/${projectId}/report.pdf`;
+
+export const reportSourceUrl = (projectId: string) => `/api/p/${projectId}/report-typst.zip`;

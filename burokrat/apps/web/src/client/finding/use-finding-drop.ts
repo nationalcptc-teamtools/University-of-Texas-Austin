@@ -1,8 +1,8 @@
 import { findingContentSchema, type FindingContent } from "@burokrat/domain";
 import { useNavigate } from "@tanstack/react-router";
-import { useState, type DragEvent } from "react";
 import { useProjectSession } from "../project-session.ts";
 import { toasts } from "../toasts.ts";
+import { useFileDrop } from "../use-file-drop.ts";
 import { addFinding } from "./actions.ts";
 
 /** Generous for a finding's JSON, whose four prose fields are capped at 100,000 characters. */
@@ -34,13 +34,10 @@ export async function readFindingFile(
   };
 }
 
-const hasFiles = (event: DragEvent) => event.dataTransfer.types.includes("Files");
-
 /** Adds the findings in JSON files dropped on an element, and opens the last one added. */
 export function useFindingDrop(userName: string) {
   const session = useProjectSession();
   const navigate = useNavigate();
-  const [dropping, setDropping] = useState(false);
 
   async function add(files: File[]) {
     const hasAsset = (assetId: string) => assetId in session.store.getState().assets;
@@ -68,22 +65,5 @@ export function useFindingDrop(userName: string) {
       await navigate({ to: "/p/$projectId/f/$findingId", params: { projectId, findingId } });
   }
 
-  return {
-    dropping,
-    onDragOver(event: DragEvent) {
-      if (!hasFiles(event)) return;
-      event.preventDefault();
-      event.dataTransfer.dropEffect = "copy";
-      setDropping(true);
-    },
-    onDragLeave(event: DragEvent) {
-      if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDropping(false);
-    },
-    onDrop(event: DragEvent) {
-      if (!hasFiles(event)) return;
-      event.preventDefault();
-      setDropping(false);
-      void add([...event.dataTransfer.files]);
-    },
-  };
+  return useFileDrop((files) => void add(files));
 }

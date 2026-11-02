@@ -6,7 +6,8 @@ Turns findings and reports into PDFs with Typst. The templates in `typ/` read th
 Entry points:
 
 - `@burokrat/typst`: the server side. `TypstPool` compiles on Node worker threads, and `checkTypst`
-  checks the fonts at boot.
+  checks the fonts at boot. `exportReport` packs the report as a Typst project to edit and
+  compile elsewhere: the templates, its content as one `report.typ`, its images and the fonts.
 - `@burokrat/typst/browser`: the data shaping only, for the live preview.
 - `@burokrat/typst/sources`: the templates, fonts and the checked compile, for the preview's web
   worker.

@@ -1,14 +1,10 @@
-import { createRequire } from "node:module";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 import { Worker } from "node:worker_threads";
 import type { CompileJob, CompileOutcome } from "./compile.ts";
+import { PACKAGE_DIR } from "./package-dir.ts";
 import type { WorkerRequest, WorkerResponse } from "./worker.ts";
 
-// Resolved through the package name so it still works once the caller is bundled.
-const WORKER_PATH = join(
-  dirname(createRequire(import.meta.url).resolve("@burokrat/typst/package.json")),
-  "src/worker.ts",
-);
+const WORKER_PATH = join(PACKAGE_DIR, "src/worker.ts");
 
 type Pending = {
   job: CompileJob;

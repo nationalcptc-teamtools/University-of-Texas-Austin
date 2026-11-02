@@ -1,11 +1,16 @@
 import {
   ASSET_ID,
   assetEntrySchema,
-  FINDING_ID,
+  credentialEntrySchema,
+  engageContentSchema,
   findingEntrySchema,
+  machineEntrySchema,
   MAX_ASSETS,
+  MAX_CREDENTIALS,
   MAX_FINDINGS,
+  MAX_MACHINES,
   projectDocSchema,
+  RECORD_ID,
   reportContentSchema,
 } from "@burokrat/domain";
 import { isContainer, VersionVector, type LoroDoc, type LoroEvent } from "loro-crdt";
@@ -19,26 +24,34 @@ const COMPACT_AFTER_MS = 5 * 60_000;
 const SETTLE_DEBOUNCE_MS = 500;
 const SETTLE_MAX_WAIT_MS = 2_000;
 
-const REPORT_FIELDS: Record<string, z.ZodType | undefined> = reportContentSchema.shape;
+/** Roots whose fields are checked one by one. */
+const FIELDS: Record<string, Record<string, z.ZodType | undefined>> = {
+  report: reportContentSchema.shape,
+  engage: engageContentSchema.shape,
+};
 const RECORDS = {
-  findings: { key: FINDING_ID, entry: findingEntrySchema, max: MAX_FINDINGS },
+  findings: { key: RECORD_ID, entry: findingEntrySchema, max: MAX_FINDINGS },
+  machines: { key: RECORD_ID, entry: machineEntrySchema, max: MAX_MACHINES },
   assets: { key: ASSET_ID, entry: assetEntrySchema, max: MAX_ASSETS },
+  credentials: { key: RECORD_ID, entry: credentialEntrySchema, max: MAX_CREDENTIALS },
 } as const;
 
 const isRecord = (root: unknown): root is keyof typeof RECORDS =>
-  root === "findings" || root === "assets";
+  typeof root === "string" && Object.hasOwn(RECORDS, root);
 
 const json = (value: unknown) => (isContainer(value) ? value.toJSON() : value);
 
 /**
  * The parts of the doc an event touches, checked one by one: `project`, `report/<field>`,
- * `findings/<id>`, `assets/<sha>`, or a record itself for its size. "" is a change to the doc's
+ * `engage/<field>`, a record's entry such as `findings/<id>` or `assets/<sha>`, or a record
+ * itself for its size. "" is a change to the doc's
  * shape, which only a full parse can check.
  */
 function unitsOf({ path, diff }: LoroEvent): string[] {
   const [root, key] = path;
   if (root === "project") return ["project"];
-  if (root === "report" && path.length > 1) return [`report/${key}`];
+  if (typeof root === "string" && Object.hasOwn(FIELDS, root) && path.length > 1)
+    return [`${root}/${key}`];
   if (!isRecord(root)) return [""];
   if (path.length > 1) return [`${root}/${key}`];
   if (diff.type !== "map") return [""];
@@ -118,7 +131,7 @@ export class DocRoom implements Room {
   /**
    * Checks the parts an import changed against their schemas. Re-reading the whole doc costs
    * milliseconds once it holds long prose, so that only happens when its shape may have changed.
-   * Records only grow: a deleted finding is flagged, never removed.
+   * Records only grow: a deleted finding or machine is flagged, never removed.
    */
   private validate(changed: Set<string>) {
     if (changed.has("")) return void projectDocSchema.parse(this.doc.toJSON());
@@ -129,10 +142,10 @@ export class DocRoom implements Room {
     const [root, key] = unit.split("/");
     if (root === "project") {
       projectDocSchema.shape.project.parse(this.doc.getMap("project").toJSON());
-    } else if (root === "report") {
-      const schema = REPORT_FIELDS[key!];
+    } else if (Object.hasOwn(FIELDS, root!)) {
+      const schema = FIELDS[root!]![key!];
       if (!schema) return void projectDocSchema.parse(this.doc.toJSON());
-      schema.parse(json(this.doc.getMap("report").get(key!)));
+      schema.parse(json(this.doc.getMap(root!).get(key!)));
     } else if (isRecord(root)) {
       const { key: pattern, entry, max } = RECORDS[root];
       const record = this.doc.getMap(root);

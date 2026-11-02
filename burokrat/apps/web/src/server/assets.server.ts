@@ -15,8 +15,8 @@ import type { ProjectContent } from "@burokrat/domain";
 import { dataDir } from "./db.server.ts";
 import { listProjects, readProject } from "./projects.server.ts";
 
-export const MAX_ASSET_BYTES = 10 * 1024 * 1024;
-/** Long enough for an image added offline to reach the doc after its bytes were uploaded. */
+export const MAX_ASSET_BYTES = 50 * 1024 * 1024;
+/** Long enough for a file added offline to reach the doc after its bytes were uploaded. */
 const ORPHAN_GRACE_MS = 7 * 24 * 60 * 60 * 1000;
 
 const SIGNATURES = [
@@ -34,19 +34,18 @@ export const sha256Of = (bytes: Uint8Array) => createHash("sha256").update(bytes
 const blobsDir = () => join(dataDir(), "blobs");
 const blobPath = (sha256: string) => join(blobsDir(), sha256);
 
-/** An image's bytes by their SHA-256, or `undefined` if nobody uploaded them yet. */
+/** A file's bytes by their SHA-256, or `undefined` if nobody uploaded them yet. */
 export function readBlob(sha256: string) {
   return existsSync(blobPath(sha256)) ? readFileSync(blobPath(sha256)) : undefined;
 }
 
 /**
- * Stores an image under its SHA-256, which must be `sha256`. Storing the same bytes again does
+ * Stores a file under its SHA-256, which must be `sha256`. Storing the same bytes again does
  * nothing. Everything here is synchronous, so garbage collection never interleaves with a store.
  */
 export function storeBlob(sha256: string, bytes: Uint8Array) {
-  if (bytes.byteLength > MAX_ASSET_BYTES) throw new Error("Images are limited to 10 MB.");
-  if (!sniffImage(bytes)) throw new Error("Only PNG, JPEG and GIF images are accepted.");
-  if (sha256Of(bytes) !== sha256) throw new Error("The image does not match its hash.");
+  if (bytes.byteLength > MAX_ASSET_BYTES) throw new Error("Files are limited to 50 MB.");
+  if (sha256Of(bytes) !== sha256) throw new Error("The file does not match its hash.");
   const path = blobPath(sha256);
   if (existsSync(path)) return;
   mkdirSync(blobsDir(), { recursive: true });
@@ -65,7 +64,7 @@ export function assetBytes(sha256s: string[]): Record<string, Uint8Array> {
   );
 }
 
-/** Every image the project holds or shows, deleted findings included so they can be restored. */
+/** Every file the project holds or shows, deleted findings included so they can be restored. */
 export function projectBlobs({ assets, findings, report }: ProjectContent) {
   return new Set(
     [

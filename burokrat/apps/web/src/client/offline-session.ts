@@ -1,5 +1,5 @@
 import { getSessionFn } from "../auth.ts";
-import { forgetPendingImages } from "./images.ts";
+import { forgetPendingFiles } from "./files.ts";
 import { forgetLocalCopies } from "./local-docs.ts";
 import { forgetLists } from "./saved-lists.ts";
 
@@ -43,7 +43,7 @@ export async function forgetDevice() {
   await Promise.all([
     forgetLocalCopies(),
     forgetLists(),
-    forgetPendingImages(),
+    forgetPendingFiles(),
     caches?.delete("images"),
   ]);
 }

@@ -12,6 +12,7 @@ export {
   type TypstData,
   type TypstInput,
 } from "./data.ts";
+export { exportReport, type ExportAsset } from "./export.ts";
 export { TypstPool } from "./pool.ts";
 
 const describe = (diagnostics: Diagnostic[]) =>

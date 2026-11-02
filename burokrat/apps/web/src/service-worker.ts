@@ -1,7 +1,7 @@
 /**
  * Keeps the app usable offline. Build files come from the cache. Pages come from the network
  * while it answers, and otherwise from a copy of `/`: every signed-in route renders in the
- * browser, so their pages are the same. Project images are cached the first time they load.
+ * browser, so their pages are the same. Project files are cached the first time they load.
  */
 
 type ExtendableEvent = Event & { waitUntil(work: Promise<unknown>): void };

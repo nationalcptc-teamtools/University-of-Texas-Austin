@@ -4,7 +4,14 @@ import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { REPORT_TEMPLATE, writeFinding } from "@burokrat/domain";
+import {
+  REPORT_TEMPLATE,
+  writeCredential,
+  writeFinding,
+  writeMachine,
+  type CredentialEntry,
+  type MachineEntry,
+} from "@burokrat/domain";
 import { FINDING_TEMPLATES } from "@burokrat/domain/finding-templates";
 import { eq } from "drizzle-orm";
 import { EphemeralStore, LoroDoc, type LoroMap } from "loro-crdt";
@@ -93,8 +100,36 @@ async function connect(name: string) {
 const FINDING_ID = "aaaaaaaaaaaaaaaaaaaaa";
 const entry = {
   ...FINDING_TEMPLATES[0]!,
+  targets: {},
   owner: "alice",
   createdBy: "alice",
+  createdAt: 1,
+  deleted: false,
+};
+const machine: MachineEntry = {
+  ip: "10.0.0.23",
+  hostname: "",
+  os: "",
+  status: "untouched",
+  scope: "in",
+  scopeNote: "",
+  claimedAt: 0,
+  services: {},
+  notes: "",
+  owner: "",
+  createdBy: "mallory",
+  createdAt: 1,
+  deleted: false,
+};
+const credential: CredentialEntry = {
+  username: "svc_sql",
+  domain: "CORP",
+  secret: "Summer2026!",
+  type: "password",
+  source: "",
+  works: {},
+  note: "",
+  createdBy: "mallory",
   createdAt: 1,
   deleted: false,
 };
@@ -105,7 +140,10 @@ const newProject = () =>
   createProject({
     project: { name: "Test", companyName: "Acme", teamName: "Team-01" },
     findings: { [FINDING_ID]: entry },
+    machines: {},
     assets: {},
+    credentials: {},
+    engage: { outOfScope: "", notes: "" },
     report: REPORT_TEMPLATE,
   });
 
@@ -232,14 +270,42 @@ describe("project rooms", () => {
     expect(journal(id)).toHaveLength(0);
   });
 
+  it("accepts credentials and the team's notes", async () => {
+    const { id } = newProject();
+    const alice = await openProject("alice", id);
+    writeCredential(alice.doc.getMap("credentials"), nanoid(), credential);
+    alice.doc.getMap("engage").ensureMergeableText("notes").insert(0, "DA via kerberoast");
+    alice.doc.commit();
+    await vi.waitFor(() => expect(journal(id)).toHaveLength(1));
+    expect(evicted(id)).toBe(false);
+  });
+
   it.each([
     ["removes a finding", (findings: LoroMap) => findings.delete(FINDING_ID)],
     ["adds a finding under a malformed id", (f: LoroMap) => writeFinding(f, "short", entry)],
     ["adds an incomplete finding", (f: LoroMap) => f.ensureMergeableMap(nanoid()).set("x", 1)],
+    [
+      "adds a machine with an unknown status",
+      (_: LoroMap, doc: LoroDoc) =>
+        writeMachine(doc.getMap("machines"), nanoid(), { ...machine, status: "pwned" as "owned" }),
+    ],
+    [
+      "adds a credential with an unknown type",
+      (_: LoroMap, doc: LoroDoc) =>
+        writeCredential(doc.getMap("credentials"), nanoid(), {
+          ...credential,
+          type: "cookie" as "other",
+        }),
+    ],
+    [
+      "writes past the length of the excluded addresses",
+      (_: LoroMap, doc: LoroDoc) =>
+        doc.getMap("engage").ensureMergeableText("outOfScope").insert(0, "1".repeat(10_001)),
+    ],
   ])("evicts a client that %s", async (_, edit) => {
     const { id } = newProject();
     const mallory = await openProject("mallory", id);
-    edit(mallory.findings);
+    edit(mallory.findings, mallory.doc);
     mallory.doc.commit();
     await vi.waitFor(() => expect(evicted(id)).toBe(true));
     expect(journal(id)).toHaveLength(0);

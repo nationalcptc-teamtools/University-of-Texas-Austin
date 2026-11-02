@@ -3,7 +3,7 @@ import type { FieldData, FindingData, ImagesData, TypstData } from "./data.ts";
 import type { JobKind } from "./paths.ts";
 
 /** Everything a text field can read when it compiles on its own. */
-export type FieldCheck = Pick<TypstData, "company" | "team" | "risk"> & {
+export type FieldCheck = Pick<TypstData, "company" | "team" | "risk" | "hosts"> & {
   findings: Pick<FindingData, "category">[];
   field: FieldData;
   images: ImagesData;
@@ -40,12 +40,12 @@ function textFields(data: TypstData) {
 /** Compiles each text field alone, and flags the ones that fail on a copy of `data`. */
 async function checkFields<R>(data: TypstData, compile: Compilers<R>) {
   const checked = structuredClone(data);
-  const { company, team, risk } = data;
+  const { company, team, risk, hosts } = data;
   const findings = data.findings.map(({ category }) => ({ category }));
   const broken: BrokenField[] = [];
   for (const { label, field, images } of textFields(checked)) {
     if (!field.source.trim()) continue;
-    const error = await compile.field({ company, team, risk, findings, field, images });
+    const error = await compile.field({ company, team, risk, hosts, findings, field, images });
     if (error === undefined) continue;
     field.error = error;
     broken.push({ label, error });

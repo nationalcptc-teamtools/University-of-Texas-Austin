@@ -15,7 +15,7 @@ export const Route = createFileRoute("/api/p/$projectId/findings/{$findingId}.js
         }
         const title = oneLine(finding.title).slice(0, 100) || "finding";
         const name = downloadName(content.project, `${title}.json`);
-        return Response.json(findingContentOf(finding), {
+        return Response.json(findingContentOf(finding, content.machines), {
           headers: {
             "Content-Disposition": `attachment; filename="${name}"`,
             "Cache-Control": "no-store",

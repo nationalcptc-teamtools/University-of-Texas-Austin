@@ -3,15 +3,30 @@ import {
   findingEntrySchema,
   writeFinding,
   type FindingContent,
+  type FindingEntry,
 } from "@burokrat/domain";
 import type { LoroMap } from "loro-crdt";
 import { nanoid } from "nanoid";
 import type { ProjectSession } from "../project-session.ts";
 
-/** Adds a finding owned by `owner`, offline too, and returns its id. */
-export function addFinding(session: ProjectSession, content: FindingContent, owner: string) {
+type Targets = FindingEntry["targets"];
+
+/** Adds a finding owned by `owner`, affecting `targets`, offline too, and returns its id. */
+export function addFinding(
+  session: ProjectSession,
+  content: FindingContent,
+  owner: string,
+  targets: Targets = {},
+) {
   const id = nanoid();
-  const entry = { ...content, owner, createdBy: owner, createdAt: Date.now(), deleted: false };
+  const entry = {
+    ...content,
+    targets,
+    owner,
+    createdBy: owner,
+    createdAt: Date.now(),
+    deleted: false,
+  };
   writeFinding(session.doc.getMap("findings"), id, entry);
   session.doc.commit({ origin: "sys:create" });
   return id;
@@ -20,9 +35,10 @@ export function addFinding(session: ProjectSession, content: FindingContent, own
 /** Adds a copy of a finding's current content, owned by `owner`, and returns its id. */
 export function duplicateFinding(session: ProjectSession, findingId: string, owner: string) {
   const original = session.doc.getMap("findings").get(findingId) as LoroMap;
-  const content = findingContentOf(findingEntrySchema.parse(original.toJSON()));
+  const entry = findingEntrySchema.parse(original.toJSON());
+  const content = findingContentOf(entry, {});
   const title = `${content.title} (copy)`.slice(0, 500);
-  return addFinding(session, { ...content, title }, owner);
+  return addFinding(session, { ...content, title }, owner, entry.targets);
 }
 
 /** Changes who owns the finding. The change is the project's, so it is not undone with Mod-Z. */

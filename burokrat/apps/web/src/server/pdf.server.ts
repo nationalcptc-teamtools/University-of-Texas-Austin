@@ -1,13 +1,16 @@
 import { createHash } from "node:crypto";
 import {
+  exportReport,
   findingInput,
   reportInput,
   TypstPool,
+  type ExportAsset,
   type JobKind,
   type TypstInput,
 } from "@burokrat/typst";
-import { findingContentOf, liveFindings, oneLine } from "@burokrat/domain";
-import { assetBytes } from "./assets.server.ts";
+import { findingContentOf, liveFindings, oneLine, type ProjectContent } from "@burokrat/domain";
+import { zipSync } from "fflate";
+import { assetBytes, sniffImage } from "./assets.server.ts";
 import { downloadName, readProject } from "./projects.server.ts";
 import { getSession } from "./session.server.ts";
 
@@ -67,10 +70,19 @@ export async function findingResponse(request: Request, projectId: string, findi
   if (!content || !finding || finding.deleted) return text(404, "Finding not found.");
   return respond(request, {
     kind: "finding",
-    input: findingInput(content.project, findingContentOf(finding)),
+    input: findingInput(content.project, findingContentOf(finding, content.machines)),
     name: downloadName(content.project, `${oneLine(finding.title).slice(0, 100) || "finding"}.pdf`),
   });
 }
+
+/** What the report shows: its live findings and machines, as the PDF and its source share. */
+const liveReportInput = (content: ProjectContent) =>
+  reportInput(
+    content.project,
+    liveFindings(content.findings).map((finding) => findingContentOf(finding, content.machines)),
+    content.report,
+    content.machines,
+  );
 
 export async function reportResponse(request: Request, projectId: string) {
   if (!(await getSession())) return text(401, "Sign in first.");
@@ -78,11 +90,34 @@ export async function reportResponse(request: Request, projectId: string) {
   if (!content) return text(404, "Project not found.");
   return respond(request, {
     kind: "report",
-    input: reportInput(
-      content.project,
-      liveFindings(content.findings).map(findingContentOf),
-      content.report,
-    ),
+    input: liveReportInput(content),
     name: downloadName(content.project, "report.pdf"),
+  });
+}
+
+/** The report as an editable Typst project, zipped, so it can be redacted and compiled elsewhere. */
+export async function reportSourceResponse(projectId: string) {
+  if (!(await getSession())) return text(401, "Sign in first.");
+  const content = readProject(projectId);
+  if (!content) return text(404, "Project not found.");
+  const input = liveReportInput(content);
+  const assets = Object.fromEntries(
+    Object.entries(assetBytes(input.assetIds)).map(([id, bytes]): [string, ExportAsset] => [
+      id,
+      { bytes, extension: sniffImage(bytes)?.split("/")[1] },
+    ]),
+  );
+  let files;
+  try {
+    files = exportReport(input, assets);
+  } catch (error) {
+    return text(409, (error as Error).message);
+  }
+  return new Response(new Uint8Array(zipSync(files)), {
+    headers: {
+      "Content-Type": "application/zip",
+      "Content-Disposition": `attachment; filename="${downloadName(content.project, "report-typst.zip")}"`,
+      "Cache-Control": "no-store",
+    },
   });
 }

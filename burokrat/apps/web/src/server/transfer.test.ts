@@ -18,7 +18,9 @@ const PNG = Buffer.from(
 );
 const LOGO = sha256Of(PNG);
 const MISSING = "f".repeat(64);
-const meta = { createdBy: "Alice", createdAt: 1, deleted: false };
+const meta = { targets: {}, createdBy: "Alice", createdAt: 1, deleted: false };
+
+const file = { type: "image/png", size: 1, machines: {} };
 
 let zip: Uint8Array;
 let original: ProjectContent;
@@ -39,10 +41,13 @@ beforeAll(() => {
         deleted: true,
       },
     },
+    machines: {},
     assets: {
-      [LOGO]: { name: "logo.png", createdBy: "Alice", createdAt: 1 },
-      [MISSING]: { name: "never-uploaded.png", createdBy: "Bob", createdAt: 2 },
+      [LOGO]: { ...file, name: "logo.png", createdBy: "Alice", createdAt: 1 },
+      [MISSING]: { ...file, name: "never-uploaded.png", createdBy: "Bob", createdAt: 2 },
     },
+    credentials: {},
+    engage: { outOfScope: "", notes: "" },
     report: { ...REPORT_TEMPLATE, cover: { ...REPORT_TEMPLATE.cover, logoAssetId: LOGO } },
   });
   original = readProject(project.id)!;

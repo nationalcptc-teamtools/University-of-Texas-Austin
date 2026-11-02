@@ -1,12 +1,14 @@
 import { LEVELS_HIGH_FIRST, overallRisk, liveFindings, type ProjectState } from "@burokrat/domain";
 import { LayerCard, LinkButton, Text } from "@cloudflare/kumo";
 import { DownloadSimpleIcon } from "@phosphor-icons/react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { PageHeader, ToolbarLabel } from "../../../client/components/PageHeader.tsx";
 import { PROJECT_FIELDS } from "../../../client/components/ProjectFields.tsx";
 import { RiskBadge } from "../../../client/components/RiskBadge.tsx";
 import { SyncedInput } from "../../../client/editors/SyncedInput.tsx";
+import { storedMode } from "../../../client/engage/mode.ts";
+import { CoverageGaps } from "../../../client/report/CoverageGaps.tsx";
 import {
   unitOf,
   updateProject,
@@ -17,6 +19,9 @@ import { STRUCT } from "../../../client/undo-registry.ts";
 import { useOnline } from "../../../client/use-connection.ts";
 
 export const Route = createFileRoute("/_authed/p/$projectId/")({
+  beforeLoad: ({ params }) => {
+    if (storedMode() === "engage") throw redirect({ to: "/p/$projectId/engage", params });
+  },
   component: ProjectOverview,
 });
 
@@ -57,6 +62,7 @@ function ProjectOverview() {
             </LayerCard>
           ))}
         </section>
+        <CoverageGaps />
         <ProjectSettings />
       </div>
     </>

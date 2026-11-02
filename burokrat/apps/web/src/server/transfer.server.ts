@@ -2,17 +2,10 @@ import { nanoid } from "nanoid";
 import { projectDocSchema, projectInfoSchema, type ProjectContent } from "@burokrat/domain";
 import { strFromU8, strToU8, Unzip, UnzipInflate, zipSync, type Zippable } from "fflate";
 import { z } from "zod";
-import {
-  MAX_ASSET_BYTES,
-  projectBlobs,
-  readBlob,
-  sha256Of,
-  sniffImage,
-  storeBlob,
-} from "./assets.server.ts";
+import { MAX_ASSET_BYTES, projectBlobs, readBlob, sha256Of, storeBlob } from "./assets.server.ts";
 import { createProject, type ProjectRow } from "./projects.server.ts";
 
-const FORMAT = 2;
+const FORMAT = 3;
 const MANIFEST = "project.json";
 /** Caps an upload, and what its entries may inflate to. */
 export const MAX_IMPORT_BYTES = 500 * 1024 * 1024;
@@ -29,7 +22,7 @@ const manifestSchema = z.strictObject({
 type Manifest = z.infer<typeof manifestSchema>;
 
 /**
- * The project's live content and every image it holds that was uploaded, as a zip. Edit history
+ * The project's live content and every file it holds that was uploaded, as a zip. Edit history
  * is not included.
  */
 export function exportProject(content: ProjectContent): Uint8Array {
@@ -83,8 +76,7 @@ function readArchive(zip: Uint8Array) {
   for (const sha256 of projectBlobs(content)) {
     const bytes = files[blobPath(sha256)];
     if (!bytes) continue;
-    if (bytes.byteLength > MAX_ASSET_BYTES) throw new Error("An image is larger than 10 MB.");
-    if (!sniffImage(bytes)) throw new Error(`${blobPath(sha256)} is not an image.`);
+    if (bytes.byteLength > MAX_ASSET_BYTES) throw new Error("A file is larger than 50 MB.");
     if (sha256Of(bytes) !== sha256) throw new Error(`${blobPath(sha256)} does not match its hash.`);
     blobs.set(sha256, bytes);
   }
@@ -93,7 +85,7 @@ function readArchive(zip: Uint8Array) {
 
 /**
  * Creates a new project from an exported zip, next to the original if it is still here. All
- * checks run before anything is written. Images the export lacks stay missing, as they were.
+ * checks run before anything is written. Files the export lacks stay missing, as they were.
  */
 export function importProject(zip: Uint8Array): ProjectRow {
   const { content, blobs } = readArchive(zip);

@@ -14,20 +14,24 @@ export function FindingPreview({ doc, findingId }: { doc: LoroDoc; findingId: st
       return {
         project: shown.getMap("project").toJSON() as unknown,
         finding: isContainer(finding) ? (finding.toJSON() as unknown) : finding,
+        machines: shown.getMap("machines").toJSON() as unknown,
       };
     },
     [findingId],
   );
-  const { project, finding } = useDocValue(doc, read);
+  const { project, finding, machines } = useDocValue(doc, read);
   const shaped = useMemo(
     () =>
       attempt(() =>
         findingInput(
           projectDocSchema.shape.project.parse(project),
-          findingContentOf(findingEntrySchema.parse(finding)),
+          findingContentOf(
+            findingEntrySchema.parse(finding),
+            projectDocSchema.shape.machines.parse(machines),
+          ),
         ),
       ),
-    [project, finding],
+    [project, finding, machines],
   );
   return <TypstPreview projectId={projectId} kind="finding" {...shaped} />;
 }

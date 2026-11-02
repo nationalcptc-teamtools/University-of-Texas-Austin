@@ -10,8 +10,12 @@ import {
   RISK_COLORS,
   RISK_MATRIX,
   scoreCvss,
+  compareServiceKeys,
+  liveMachines,
+  portLabel,
   type FindingContent,
   type Level,
+  type MachineEntry,
   type MitreTechnique,
   type ReportContent,
 } from "@burokrat/domain";
@@ -40,6 +44,13 @@ export type FindingData = {
   references: { name: string; url: string; domain: string }[];
 };
 
+export type HostData = {
+  ip: string;
+  hostname: string;
+  os: string;
+  services: { port: string; name: string; product: string }[];
+};
+
 type ReportData = {
   cover: {
     title: string;
@@ -59,6 +70,7 @@ export type TypstData = {
   team: string;
   risk: typeof RISK;
   findings: FindingData[];
+  hosts: HostData[];
   report: ReportData | null;
 };
 
@@ -130,12 +142,36 @@ function assetIdsOf({ findings, report }: TypstData) {
   return [...new Set(ids)];
 }
 
-function finish(project: ProjectInfo, findings: FindingData[], report: ReportData | null) {
+/** The machines in scope or to tread carefully on, by IP, with their services by port. */
+function shapeHosts(machines: Record<string, MachineEntry>): HostData[] {
+  return liveMachines(machines)
+    .filter(({ scope }) => scope !== "out")
+    .map(({ ip, hostname, os, services }) => ({
+      ip,
+      hostname,
+      os,
+      services: Object.keys(services)
+        .sort(compareServiceKeys)
+        .map((key) => ({
+          port: portLabel(key),
+          name: services[key]!.name,
+          product: services[key]!.product,
+        })),
+    }));
+}
+
+function finish(
+  project: ProjectInfo,
+  findings: FindingData[],
+  hosts: HostData[],
+  report: ReportData | null,
+) {
   const data: TypstData = {
     company: project.companyName,
     team: project.teamName,
     risk: RISK,
     findings,
+    hosts,
     report,
   };
   return { data, assetIds: assetIdsOf(data) };
@@ -143,7 +179,7 @@ function finish(project: ProjectInfo, findings: FindingData[], report: ReportDat
 
 /** Data for a single finding's PDF. */
 export function findingInput(project: ProjectInfo, content: FindingContent): TypstInput {
-  return finish(project, [shapeFinding(content, true)], null);
+  return finish(project, [shapeFinding(content, true)], [], null);
 }
 
 /** Data for the full report: cover, prologue, findings by risk, epilogue. */
@@ -151,11 +187,13 @@ export function reportInput(
   project: ProjectInfo,
   findings: FindingContent[],
   report: ReportContent,
+  machines: Record<string, MachineEntry>,
 ): TypstInput {
   const { cover } = report;
   return finish(
     project,
     findings.toSorted(compareFindings).map((content) => shapeFinding(content, false)),
+    shapeHosts(machines),
     {
       cover: {
         title: cover.title,

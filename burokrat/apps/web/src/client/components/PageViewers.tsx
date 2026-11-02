@@ -4,7 +4,7 @@ import { useViewersOf } from "../use-project-presence.ts";
 
 const letters = new Intl.Segmenter();
 
-function initial(name: string) {
+export function initial(name: string) {
   const [first] = letters.segment(name.trim());
   return first?.segment.toUpperCase() ?? "?";
 }

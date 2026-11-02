@@ -1,4 +1,9 @@
-import { BLANK_FINDING, REPORT_TEMPLATE, type FindingContent } from "@burokrat/domain";
+import {
+  BLANK_FINDING,
+  REPORT_TEMPLATE,
+  type FindingContent,
+  type MachineEntry,
+} from "@burokrat/domain";
 import { FINDING_TEMPLATES } from "@burokrat/domain/finding-templates";
 import { afterAll, describe, expect, it } from "vite-plus/test";
 import { compileOnce, createCompiler } from "./compile.ts";
@@ -10,6 +15,23 @@ afterAll(() => pool.close());
 
 const finding = (overrides: Partial<FindingContent>): FindingContent => ({
   ...BLANK_FINDING,
+  ...overrides,
+});
+
+const machine = (overrides: Partial<MachineEntry>): MachineEntry => ({
+  ip: "10.0.0.1",
+  hostname: "",
+  os: "",
+  status: "untouched",
+  scope: "in",
+  scopeNote: "",
+  claimedAt: 0,
+  services: {},
+  notes: "",
+  owner: "",
+  createdBy: "",
+  createdAt: 0,
+  deleted: false,
   ...overrides,
 });
 
@@ -26,6 +48,7 @@ describe("data", () => {
         finding({ title: "crit", impact: 4, likelihood: 4 }),
       ],
       REPORT_TEMPLATE,
+      {},
     );
     expect(data.findings.map((f) => f.title)).toEqual(["crit", "a", "b", "info"]);
     expect(data.findings.map((f) => f.standalone)).toEqual([false, false, false, false]);
@@ -66,13 +89,74 @@ describe("data", () => {
   });
 });
 
+describe("hosts", () => {
+  const machines = {
+    b: machine({
+      ip: "10.0.0.10",
+      hostname: "web",
+      os: "Linux",
+      scope: "caution",
+      services: {
+        "445/tcp": { name: "smb", product: "Samba", note: "" },
+        "53/udp": { name: "dns", product: "", note: "" },
+        "53/tcp": { name: "dns", product: "bind", note: "" },
+      },
+    }),
+    a: machine({ ip: "10.0.0.2" }),
+    out: machine({ ip: "10.0.0.3", scope: "out" }),
+    gone: machine({ ip: "10.0.0.4", deleted: true }),
+  };
+
+  it("lists the live machines in scope by IP, with their ports in order", () => {
+    const { data } = reportInput(project, [], REPORT_TEMPLATE, machines);
+    expect(data.hosts).toEqual([
+      { ip: "10.0.0.2", hostname: "", os: "", services: [] },
+      {
+        ip: "10.0.0.10",
+        hostname: "web",
+        os: "Linux",
+        services: [
+          { port: "TCP/53", name: "dns", product: "bind" },
+          { port: "UDP/53", name: "dns", product: "" },
+          { port: "TCP/445", name: "smb", product: "Samba" },
+        ],
+      },
+    ]);
+  });
+
+  it("compiles a report that shows the host and service tables", () => {
+    const report = { ...REPORT_TEMPLATE, prologue: "#hosts-table\n\n#services-table" };
+    const { data } = reportInput(project, [], report, machines);
+    const outcome = compileOnce(createCompiler(), {
+      kind: "report",
+      data,
+      assets: {},
+      creationTimestamp: 0,
+    });
+    if (!outcome.ok) throw new Error(JSON.stringify(outcome.diagnostics));
+    expect(outcome.warnings).toEqual([]);
+  });
+
+  it("compiles a report with no machines", () => {
+    const report = { ...REPORT_TEMPLATE, prologue: "#hosts-table\n\n#services-table" };
+    const { data } = reportInput(project, [], report, {});
+    const outcome = compileOnce(createCompiler(), {
+      kind: "report",
+      data,
+      assets: {},
+      creationTimestamp: 0,
+    });
+    expect(outcome.ok).toBe(true);
+  });
+});
+
 describe("compile", () => {
   it("passes the self-check, so the fonts load", async () => {
     await checkTypst(pool);
   });
 
   it("compiles the full report from every seed template without broken fields", () => {
-    const { data } = reportInput(project, FINDING_TEMPLATES, REPORT_TEMPLATE);
+    const { data } = reportInput(project, FINDING_TEMPLATES, REPORT_TEMPLATE, {});
     const outcome = compileOnce(createCompiler(), {
       kind: "report",
       data,
@@ -90,7 +174,7 @@ describe("compile", () => {
       finding({ title: "a" }),
       finding({ title: "b" }),
     ];
-    const { data } = reportInput(project, findings, REPORT_TEMPLATE);
+    const { data } = reportInput(project, findings, REPORT_TEMPLATE, {});
     // Only a finding on its own marks where its title lands.
     for (const f of data.findings) f.standalone = true;
     const compiler = createCompiler();

@@ -1,9 +1,9 @@
 import { Button, Dialog, Text } from "@cloudflare/kumo";
 import { ImageIcon, UploadSimpleIcon } from "@phosphor-icons/react";
-import type { AssetEntry, ProjectState } from "@burokrat/domain";
+import type { AssetState, ProjectState } from "@burokrat/domain";
 import { useState, type DragEvent } from "react";
 import { assetUrl } from "../collections.ts";
-import { ACCEPTED_IMAGES, addImageFile } from "../images.ts";
+import { ACCEPTED_IMAGES, addImageFile, isImage } from "../files.ts";
 import { useProjectSession, useProjectState } from "../project-session.ts";
 
 /** One of the project's images: its SHA-256, and the name of the file it came from. */
@@ -13,8 +13,9 @@ type Props = { userName: string; label: string; onPick: (asset: Asset) => void }
 
 const selectAssets = (state: ProjectState) => state.assets;
 
-const newestFirst = (assets: Record<string, AssetEntry>) =>
+const newestImagesFirst = (assets: Record<string, AssetState>) =>
   Object.entries(assets)
+    .filter(([, asset]) => isImage(asset.type))
     .map(([id, asset]) => ({ id, ...asset }))
     .sort((a, b) => b.createdAt - a.createdAt);
 
@@ -51,7 +52,7 @@ type GridProps = { userName: string; onPick: (asset: Asset) => void };
 
 function AssetGrid({ userName, onPick }: GridProps) {
   const session = useProjectSession();
-  const assets = newestFirst(useProjectState(selectAssets));
+  const assets = newestImagesFirst(useProjectState(selectAssets));
   const [error, setError] = useState("");
   const [adding, setAdding] = useState(false);
 
