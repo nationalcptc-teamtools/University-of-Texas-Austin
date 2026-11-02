@@ -1,0 +1,25 @@
+{
+  "name": "@burokrat/typst",
+  "private": true,
+  "description": "Typst templates and compilers that turn findings and reports into PDFs.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./browser": "./src/browser.ts",
+    "./package.json": "./package.json",
+    "./sources": "./src/sources.ts"
+  },
+  "scripts": {
+    "test": "vp test"
+  },
+  "dependencies": {
+    "@burokrat/domain": "workspace:*",
+    "@myriaddreamin/typst-ts-node-compiler": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

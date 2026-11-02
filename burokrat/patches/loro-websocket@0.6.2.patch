@@ -1,0 +1,28 @@
+diff --git a/dist/client/index.cjs b/dist/client/index.cjs
+index c2036e771e8ee9981ed5e8a9fd9f8834e98d0191..0c3a6c90f57c80deaf6b37e79cf8d6aa98457f3d 100644
+--- a/dist/client/index.cjs
++++ b/dist/client/index.cjs
+@@ -429,8 +429,8 @@ var LoroWebsocketClient = class {
+ 				this.pendingRooms.delete(roomId);
+ 				if (shouldRejoin && active && adaptor) this.sendRejoinRequest(roomId, msg.roomId, adaptor, active.room, auth);
+ 				else {
+-					this.cleanupRoom(msg.roomId, msg.crdt);
+ 					this.emitRoomStatus(roomId, RoomJoinStatus.Error);
++					this.cleanupRoom(msg.roomId, msg.crdt);
+ 				}
+ 				break;
+ 			}
+diff --git a/dist/client/index.js b/dist/client/index.js
+index b89e681952b7aebe9460eb6e893c3298d517a883..2be85acc65072b0daf528f327dcedf62e7075668 100644
+--- a/dist/client/index.js
++++ b/dist/client/index.js
+@@ -431,8 +431,8 @@ var LoroWebsocketClient = class {
+ 				this.pendingRooms.delete(roomId);
+ 				if (shouldRejoin && active && adaptor) this.sendRejoinRequest(roomId, msg.roomId, adaptor, active.room, auth);
+ 				else {
+-					this.cleanupRoom(msg.roomId, msg.crdt);
+ 					this.emitRoomStatus(roomId, RoomJoinStatus.Error);
++					this.cleanupRoom(msg.roomId, msg.crdt);
+ 				}
+ 				break;
+ 			}

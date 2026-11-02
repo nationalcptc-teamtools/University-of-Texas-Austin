@@ -1,0 +1,57 @@
+{
+  "title": "Resource-Based Constrained Delegation (RBCD) Abuse",
+  "impact": 4,
+  "likelihood": 2,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "H"
+  },
+  "mitre": {
+    "T1558": true,
+    "T1484": true
+  },
+  "scope": [
+    {
+      "ip": "(DOMAIN_CONTROLLER_IP)",
+      "name": "(DOMAIN_CONTROLLER_HOSTNAME)",
+      "services": [
+        {
+          "name": "Kerberos",
+          "port": "TCP/88"
+        },
+        {
+          "name": "LDAP",
+          "port": "TCP/389"
+        },
+        {
+          "name": "LDAPS",
+          "port": "TCP/636"
+        },
+        {
+          "name": "SMB",
+          "port": "TCP/445"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1558 Steal or Forge Kerberos Tickets",
+      "url": "https://attack.mitre.org/techniques/T1558/"
+    },
+    {
+      "name": "Microsoft - Resource-Based Constrained Delegation",
+      "url": "https://learn.microsoft.com/en-us/windows-server/security/kerberos/kerberos-constrained-delegation-overview"
+    }
+  ],
+  "images": [],
+  "description": "Resource-based constrained delegation is controlled by the msDS-AllowedToActOnBehalfOfOtherIdentity attribute on the target computer object. An attacker who holds write privileges over a computer object (for example, GenericWrite or WriteProperty) can populate this attribute with a controlled account and then impersonate any user to that computer, including local administrators. The ability to create machine accounts (default MachineAccountQuota) often provides the controlled account needed.",
+  "businessImpact": "Critical --- successful abuse grants administrative access to the targeted host by impersonating privileged users, enabling lateral movement and further escalation.",
+  "exploitDetails": "",
+  "remediation": "- Review and restrict write permissions (ACLs) on computer objects; remove unnecessary GenericWrite/GenericAll grants.\n- Set the ms-DS-MachineAccountQuota to 0 so standard users cannot create computer accounts.\n- Add privileged accounts to the Protected Users group and mark them as non-delegatable.\n- Audit the msDS-AllowedToActOnBehalfOfOtherIdentity attribute for unexpected values."
+}

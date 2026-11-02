@@ -1,0 +1,40 @@
+{
+  "title": "Cron Job Privilege Escalation / Persistence",
+  "impact": 3,
+  "likelihood": 2,
+  "cvss": {
+    "AV": "L",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "H"
+  },
+  "mitre": {
+    "T1053.003": true
+  },
+  "scope": [
+    {
+      "ip": "(LINUX_HOST_IP)",
+      "name": "(LINUX_HOSTNAME)",
+      "services": [
+        {
+          "name": "SSH",
+          "port": "TCP/22"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1053.003 Cron",
+      "url": "https://attack.mitre.org/techniques/T1053/003/"
+    }
+  ],
+  "images": [],
+  "description": "A scheduled cron job runs as a privileged user but references a script or binary that is writable by a lower-privileged user, uses a weak PATH, or operates on attacker-writable files. A local user can modify the referenced target so that their code executes with the privileges of the cron owner, enabling escalation or persistence.",
+  "businessImpact": "High --- writable or insecurely configured cron jobs allow a standard user to execute code as root and to maintain persistent access.",
+  "exploitDetails": "",
+  "remediation": "- Ensure scripts and binaries invoked by privileged cron jobs are owned by root and not writable by others.\n- Use absolute paths and set an explicit, safe PATH in cron jobs.\n- Restrict permissions on cron directories and crontab files.\n- Monitor cron configuration for unauthorized changes."
+}

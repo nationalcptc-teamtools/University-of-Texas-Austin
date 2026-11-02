@@ -1,0 +1,40 @@
+{
+  "title": "Buffer Overflow / Memory Corruption (Injection)",
+  "impact": 4,
+  "likelihood": 2,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "H"
+  },
+  "mitre": {
+    "T1203": true
+  },
+  "scope": [
+    {
+      "ip": "(IP_ADDRESS)",
+      "name": "(VULNERABLE_SERVICE_HOSTNAME)",
+      "services": [
+        {
+          "name": "(SERVICE_NAME)",
+          "port": "TCP/(PORT)"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "CERT Secure Coding - Buffer Overflows",
+      "url": "https://wiki.sei.cmu.edu/confluence/display/c/Buffer+Overflows"
+    }
+  ],
+  "images": [],
+  "description": "A buffer overflow in a native application or service allows specially crafted input to overwrite memory and control execution flow. Attackers may achieve arbitrary code execution or denial of service.",
+  "businessImpact": "High --- remote code execution could allow full system compromise, data exfiltration, tampering with business-critical systems, and lengthy recovery times that disrupt operations.",
+  "exploitDetails": "",
+  "remediation": "- Apply vendor patches or rebuild with mitigations (stack canaries, ASLR, DEP/NX).\n- Validate and sanitize all inputs, perform bounds checking.\n- Conduct fuzz testing and code review to identify overflow conditions.\n- Isolate vulnerable services via segmentation or sandboxing."
+}

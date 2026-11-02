@@ -1,0 +1,48 @@
+{
+  "title": "Insecure Direct Object Reference (IDOR) / Broken Access Control",
+  "impact": 3,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "H",
+    "VI": "L",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1190": true
+  },
+  "scope": [
+    {
+      "ip": "(WEB_SERVER_IP)",
+      "name": "(WEB_HOSTNAME)",
+      "services": [
+        {
+          "name": "HTTP",
+          "port": "TCP/80"
+        },
+        {
+          "name": "HTTPS",
+          "port": "TCP/443"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "OWASP - Broken Access Control",
+      "url": "https://owasp.org/Top10/A01_2021-Broken_Access_Control/"
+    },
+    {
+      "name": "OWASP - Authorization Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html"
+    }
+  ],
+  "images": [],
+  "description": "The application exposes references to internal objects (such as record IDs) and relies on them without verifying that the requesting user is authorized for that object. An attacker can alter the reference to access or modify data belonging to other users.",
+  "businessImpact": "High --- horizontal and vertical access-control bypass can expose or modify other users' data, including sensitive records.",
+  "exploitDetails": "",
+  "remediation": "- Enforce server-side authorization checks on every object access, keyed to the authenticated user.\n- Use indirect, unpredictable references or per-user scoping where appropriate.\n- Adopt a deny-by-default access model and centralize authorization logic.\n- Add automated tests for access-control on each sensitive endpoint."
+}

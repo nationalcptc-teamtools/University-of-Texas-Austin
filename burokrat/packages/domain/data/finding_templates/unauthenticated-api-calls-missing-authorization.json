@@ -1,0 +1,44 @@
+{
+  "title": "Unauthenticated API Calls / Missing Authorization",
+  "impact": 4,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1078": true
+  },
+  "scope": [
+    {
+      "ip": "(API_ENDPOINT_IP)",
+      "name": "(API_HOSTNAME)",
+      "services": [
+        {
+          "name": "HTTP API",
+          "port": "TCP/80"
+        },
+        {
+          "name": "HTTP API",
+          "port": "TCP/443"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "OWASP API Security Top 10",
+      "url": "https://owasp.org/www-project-api-security/"
+    }
+  ],
+  "images": [],
+  "description": "API endpoints that do not require authentication or proper authorization allow attackers to call privileged functions or access sensitive data.",
+  "businessImpact": "High --- unauthenticated access can lead to data disclosure, unauthorized actions, manipulation of business data, and disruption of business operations.",
+  "exploitDetails": "",
+  "remediation": "- Require strong authentication (OAuth, API keys, or mutual TLS).\n- Enforce role-based access control for all requests.\n- Implement server-side authorization validation and rate limiting.\n- Log and monitor API access for anomalies."
+}

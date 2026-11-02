@@ -1,0 +1,40 @@
+{
+  "title": "Insecure / Deprecated Cryptographic Algorithm Usage",
+  "impact": 3,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1553": true
+  },
+  "scope": [
+    {
+      "ip": "(IP_ADDRESS)",
+      "name": "(HOSTNAME_OR_APPLICATION)",
+      "services": [
+        {
+          "name": "Encryption",
+          "port": "N/A/"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "NIST Cryptographic Guidelines",
+      "url": "https://csrc.nist.gov/Projects"
+    }
+  ],
+  "images": [],
+  "description": "Use of deprecated or weak cryptographic algorithms (e.g., MD5, SHA-1, RC4, DES, 3DES, or weak RSA key sizes) for data-at-rest or data-in-transit can allow attackers to recover plaintext or forge signatures.",
+  "businessImpact": "Moderate--High --- compromise of encrypted data undermines the confidentiality and integrity of business records, allows tampering with transactions and stored data, and may lead to loss of customer trust, regulatory exposure, and reputational damage.",
+  "exploitDetails": "",
+  "remediation": "- Replace deprecated algorithms with modern alternatives (AES-GCM, SHA-256+, RSA 2048+, ECDSA).\n- Rotate encryption keys and re-encrypt stored data.\n- Update libraries and TLS configurations to remove weak ciphers.\n- Implement cryptographic policy enforcement via configuration management."
+}

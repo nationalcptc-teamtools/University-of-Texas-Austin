@@ -1,0 +1,43 @@
+{
+  "title": "Insecure PHP File Upload Handling",
+  "impact": 4,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "H"
+  },
+  "mitre": {
+    "T1190": true
+  },
+  "scope": [
+    {
+      "ip": "(WEB_SERVER_IP)",
+      "name": "(WEB_HOSTNAME)",
+      "services": [
+        {
+          "name": "HTTP",
+          "port": "TCP/80"
+        },
+        {
+          "name": "HTTP",
+          "port": "TCP/443"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "OWASP File Upload Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html"
+    }
+  ],
+  "images": [],
+  "description": "Improper validation of PHP file uploads allows attackers to upload malicious files and achieve remote code execution.",
+  "businessImpact": "High --- uploaded web shells can lead to full web server compromise, data theft, and persistent backdoors that threaten the integrity of business operations and customer data.",
+  "exploitDetails": "",
+  "remediation": "- Restrict allowed extensions and MIME types.\n- Store uploads outside of webroot and disable execution in upload directories.\n- Implement antivirus scanning and randomized filenames.\n- Regularly patch PHP and web server software."
+}

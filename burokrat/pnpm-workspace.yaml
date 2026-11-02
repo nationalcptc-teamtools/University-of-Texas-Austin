@@ -1,0 +1,84 @@
+packages:
+  - apps/*
+  - packages/*
+
+catalogMode: prefer
+
+catalog:
+  "@cloudflare/kumo": ~2.16.0
+  "@codemirror/commands": ^6.11.1
+  "@codemirror/language": ^6.13.1
+  "@codemirror/state": ^6.7.6
+  "@codemirror/view": ^6.43.15
+  "@lezer/common": ^1.5.5
+  "@lezer/highlight": ^1.2.5
+  "@myriaddreamin/typst-ts-node-compiler": 0.7.0
+  "@myriaddreamin/typst-ts-renderer": 0.7.0
+  "@myriaddreamin/typst-ts-web-compiler": 0.7.0
+  "@myriaddreamin/typst.ts": 0.7.0
+  "@phosphor-icons/react": ^2.1.10
+  "@tailwindcss/vite": ^4.3.3
+  "@tanstack/db": 1.0.0-rc.1.1
+  "@tanstack/query-core": ^5.105.0
+  "@tanstack/query-db-collection": 1.5.0
+  "@tanstack/react-db": 1.0.0-rc.1.1
+  "@tanstack/react-router": ^1.170.46
+  "@tanstack/react-start": 1.169.4
+  "@types/better-sqlite3": ^9.6.0
+  "@types/node": ^26.6.6
+  "@types/react": ^19.3.0
+  "@types/react-dom": ^19.3.0
+  "@types/ws": ^8.18.1
+  "@vitejs/plugin-react": ^6.1.2
+  ae-cvss-calculator: ^1.0.13
+  better-sqlite3: ^13.0.3
+  codemirror-lang-typst: 0.6.0
+  crossws: 0.4.17
+  drizzle-kit: 0.31.11
+  drizzle-orm: 0.45.4
+  h3: 2.0.8
+  idb-keyval: 6.3.0
+  iron-session: ^9.0.1
+  loro-adaptors: 0.6.1
+  loro-crdt: 1.17.1
+  loro-mirror-react: 2.3.3
+  loro-mirror: 2.3.3
+  loro-protocol: 0.3.0
+  loro-websocket: 0.6.2
+  nanoid: 6.0.2
+  nitro: 3.0.261029-rc
+  react-dom: ^19.3.1
+  react: ^19.3.1
+  tailwindcss: ^4.3.3
+  typescript: ^7.0.2
+  vite-plus: 1.4.0
+  vite: npm:@voidzero-dev/vite-plus-core@1.4.0
+  ws: ^8.22.1
+  zod: ^4.6.7
+  fflate: ^0.8.3
+  "@playwright/test": ^1.64.1
+  "@vitest/browser-playwright": 5.0.5
+  "@fontsource-variable/hanken-grotesk": 5.3.0
+
+allowBuilds:
+  better-sqlite3: true
+  esbuild: true
+
+overrides:
+  vite@*: "catalog:"
+peerDependencyRules:
+  allowAny:
+    - vite
+  allowedVersions:
+    vite: "*"
+permissions:
+  "@tanstack/react-router":
+    skills: true
+  "@tanstack/react-start":
+    skills: true
+  "@tanstack/db":
+    skills: true
+  "@tanstack/react-db":
+    skills: true
+patchedDependencies:
+  loro-websocket@0.6.2: patches/loro-websocket@0.6.2.patch

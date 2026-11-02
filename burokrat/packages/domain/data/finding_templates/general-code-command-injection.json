@@ -1,0 +1,49 @@
+{
+  "title": "General Code / Command Injection",
+  "impact": 4,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "H"
+  },
+  "mitre": {
+    "T1190": true,
+    "T1059": true
+  },
+  "scope": [
+    {
+      "ip": "(WEB_SERVER_IP)",
+      "name": "(WEB_HOSTNAME)",
+      "services": [
+        {
+          "name": "HTTP",
+          "port": "TCP/80"
+        },
+        {
+          "name": "HTTPS",
+          "port": "TCP/443"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "OWASP - Command Injection",
+      "url": "https://owasp.org/www-community/attacks/Command_Injection"
+    },
+    {
+      "name": "OWASP - Injection Prevention Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Injection_Prevention_Cheat_Sheet.html"
+    }
+  ],
+  "images": [],
+  "description": "User-controlled input is passed to an interpreter (operating-system shell, scripting engine, template engine, or expression evaluator) without adequate separation of code and data. An attacker can inject commands or code that the application executes, frequently resulting in remote code execution on the server.",
+  "businessImpact": "Critical --- injection into a command or code interpreter commonly yields remote code execution and full server compromise.",
+  "exploitDetails": "",
+  "remediation": "- Avoid invoking interpreters with user input; use safe APIs and parameterized interfaces.\n- Apply strict input validation and allow-listing of permitted values.\n- Run services with least privilege and in isolated/sandboxed environments.\n- Escape or avoid shell invocation entirely, and review code for injection sinks."
+}

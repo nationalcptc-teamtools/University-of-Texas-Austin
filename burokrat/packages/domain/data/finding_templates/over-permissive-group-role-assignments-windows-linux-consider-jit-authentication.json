@@ -1,0 +1,49 @@
+{
+  "title": "Over-Permissive Group/Role Assignments (Windows & Linux) (Consider JIT Authentication)",
+  "impact": 4,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "H"
+  },
+  "mitre": {
+    "T1078": true,
+    "T1548": true
+  },
+  "scope": [
+    {
+      "ip": "(HOST_OR_DOMAIN_CONTROLLER_IP)",
+      "name": "(DOMAIN_OR_HOSTNAME)",
+      "services": [
+        {
+          "name": "Identity / Directory",
+          "port": "TCP/389"
+        },
+        {
+          "name": "Identity / Directory",
+          "port": "TCP/636"
+        },
+        {
+          "name": "Identity / Directory",
+          "port": "TCP/464"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "Microsoft - Just-in-time administration (JIT)",
+      "url": "https://learn.microsoft.com/en-us/azure/active-directory/privileged-identity-management/pim-configure"
+    }
+  ],
+  "images": [],
+  "description": "Users assigned to overly-permissive groups or roles (e.g., local or domain administrators, sudoers with NOPASSWD) increase blast radius when compromised. Implementing Just-in-Time (JIT) elevation reduces standing privileges.",
+  "businessImpact": "High --- excessive privileges enable privilege escalation, lateral movement, and persistent control over systems.",
+  "exploitDetails": "",
+  "remediation": "- Remove unnecessary users from privileged groups.\n- Implement Just-in-Time (JIT) access controls for elevated tasks.\n- Require MFA for administrative elevation.\n- Audit group memberships and enforce least-privilege regularly."
+}

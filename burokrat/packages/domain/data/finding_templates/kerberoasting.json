@@ -1,0 +1,56 @@
+{
+  "title": "Kerberoasting",
+  "impact": 3,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "H",
+    "VI": "L",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1558.003": true
+  },
+  "scope": [
+    {
+      "ip": "(DOMAIN_CONTROLLER_IP)",
+      "name": "(DOMAIN_CONTROLLER_HOSTNAME)",
+      "services": [
+        {
+          "name": "Kerberos",
+          "port": "TCP/88"
+        },
+        {
+          "name": "LDAP",
+          "port": "TCP/389"
+        },
+        {
+          "name": "LDAPS",
+          "port": "TCP/636"
+        },
+        {
+          "name": "SMB",
+          "port": "TCP/445"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1558.003 Kerberoasting",
+      "url": "https://attack.mitre.org/techniques/T1558/003/"
+    },
+    {
+      "name": "Microsoft - Service Principal Names",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/ad/service-principal-names"
+    }
+  ],
+  "images": [],
+  "description": "Any authenticated domain account can request a Kerberos service ticket (TGS) for any account that has a Service Principal Name (SPN) registered. The ticket is encrypted with the service account's password hash, allowing an attacker to request it and attempt to recover the plaintext password offline. Service accounts frequently have weak, non-expiring passwords and elevated privileges, making them high-value targets.",
+  "businessImpact": "High --- recovery of a service account password commonly yields privileged access to databases, application servers, or the domain itself, enabling lateral movement and privilege escalation.",
+  "exploitDetails": "",
+  "remediation": "- Enforce long (25+ character) random passwords for all service accounts, ideally using Group Managed Service Accounts (gMSA).\n- Remove unnecessary SPNs and avoid running services under privileged or Domain Admin accounts.\n- Set AES-only encryption for service accounts and disable RC4 where possible.\n- Monitor for abnormal volumes of TGS (Kerberos service ticket) requests (Event ID 4769).\n- Regularly audit accounts with SPNs and their group memberships."
+}

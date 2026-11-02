@@ -1,0 +1,26 @@
+{
+  "name": "@burokrat/domain",
+  "private": true,
+  "description": "Finding and report content, Loro docs, risk, CVSS and MITRE data shared by server, browser and Typst.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./finding-templates": "./src/finding-templates.ts"
+  },
+  "scripts": {
+    "test": "vp test",
+    "sync-mitre": "node scripts/sync-mitre.ts"
+  },
+  "dependencies": {
+    "ae-cvss-calculator": "catalog:",
+    "loro-crdt": "catalog:",
+    "loro-mirror": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "title": "IPv6 DHCPv6 / DNS Takeover (mitm6)",
+  "impact": 3,
+  "likelihood": 2,
+  "cvss": {
+    "AV": "A",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1557": true
+  },
+  "scope": [
+    {
+      "ip": "(SUBNET)",
+      "name": "(BROADCAST_SEGMENT)",
+      "services": [
+        {
+          "name": "DHCPv6",
+          "port": "UDP/547"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1557 Adversary-in-the-Middle",
+      "url": "https://attack.mitre.org/techniques/T1557/"
+    }
+  ],
+  "images": [],
+  "description": "Windows hosts prefer IPv6 and request configuration via DHCPv6 by default, even on IPv4-only networks. An attacker can respond as a rogue DHCPv6 server and advertise themselves as the DNS server, then intercept and relay authentication (for example to LDAP or to AD CS), enabling credential capture and potential privilege escalation.",
+  "businessImpact": "High --- successful attacks can capture and relay authentication to internal services, enabling account compromise and escalation toward domain control.",
+  "exploitDetails": "",
+  "remediation": "- Disable IPv6 where it is not used, or filter rogue DHCPv6 with RA Guard / DHCPv6 Guard on switches.\n- Require LDAP signing/channel binding and SMB signing to prevent relay.\n- Enable Extended Protection for Authentication on relay targets such as AD CS.\n- Monitor for rogue DHCPv6/RA traffic on network segments."
+}

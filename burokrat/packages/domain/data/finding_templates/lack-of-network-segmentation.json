@@ -1,0 +1,44 @@
+{
+  "title": "Lack of Network Segmentation",
+  "impact": 3,
+  "likelihood": 2,
+  "cvss": {
+    "AV": "A",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "L",
+    "VI": "L",
+    "VA": "L"
+  },
+  "mitre": {
+    "T1210": true
+  },
+  "scope": [
+    {
+      "ip": "(NETWORK_RANGE)",
+      "name": "(VLAN_OR_SEGMENT)",
+      "services": [
+        {
+          "name": "Multiple services",
+          "port": "TCP/various"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "NIST SP 800-215 - Network Security",
+      "url": "https://csrc.nist.gov/"
+    },
+    {
+      "name": "CISA - Network Segmentation Guidance",
+      "url": "https://www.cisa.gov/"
+    }
+  ],
+  "images": [],
+  "description": "The network is flat or insufficiently segmented, allowing broad lateral communication between workstations, servers, and sensitive systems. Once an attacker gains a foothold on any host, the absence of internal boundaries lets them move laterally and reach critical assets with little resistance.",
+  "businessImpact": "High --- poor segmentation greatly increases breach blast radius, accelerating lateral movement, ransomware propagation, and access to crown-jewel systems.",
+  "exploitDetails": "",
+  "remediation": "- Segment the network into security zones (user, server, management, OT, DMZ) with enforced boundaries.\n- Restrict east-west traffic with firewalls/ACLs and default-deny rules between zones.\n- Isolate Tier 0 / critical assets and management interfaces on dedicated segments.\n- Adopt least-privilege network access and monitor inter-zone traffic."
+}

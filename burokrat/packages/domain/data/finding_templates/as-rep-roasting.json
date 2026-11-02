@@ -1,0 +1,52 @@
+{
+  "title": "AS-REP Roasting",
+  "impact": 3,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "H",
+    "VI": "L",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1558.004": true
+  },
+  "scope": [
+    {
+      "ip": "(DOMAIN_CONTROLLER_IP)",
+      "name": "(DOMAIN_CONTROLLER_HOSTNAME)",
+      "services": [
+        {
+          "name": "Kerberos",
+          "port": "TCP/88"
+        },
+        {
+          "name": "LDAP",
+          "port": "TCP/389"
+        },
+        {
+          "name": "LDAPS",
+          "port": "TCP/636"
+        },
+        {
+          "name": "SMB",
+          "port": "TCP/445"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1558.004 AS-REP Roasting",
+      "url": "https://attack.mitre.org/techniques/T1558/004/"
+    }
+  ],
+  "images": [],
+  "description": "Accounts configured with \"Do not require Kerberos pre-authentication\" allow any unauthenticated attacker to request an AS-REP message whose encrypted portion is derived from the account's password hash. This material can be subjected to offline password cracking. Enumeration of vulnerable accounts is possible without valid credentials.",
+  "businessImpact": "High --- compromise of an affected account provides an initial foothold in the domain and may expose privileged access if the account is a member of sensitive groups.",
+  "exploitDetails": "",
+  "remediation": "- Enable Kerberos pre-authentication for all accounts unless a documented, compensating control exists.\n- Enforce strong, long passwords on any account that cannot use pre-authentication.\n- Audit the userAccountControl attribute for the DONT\\_REQ\\_PREAUTH flag.\n- Monitor for AS-REQ requests with pre-authentication disabled (Event ID 4768)."
+}

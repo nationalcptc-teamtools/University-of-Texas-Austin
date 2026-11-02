@@ -1,0 +1,45 @@
+{
+  "title": "SNMP Information Disclosure (Default / Public Community String)",
+  "impact": 2,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "L",
+    "VI": "N",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1016": true,
+    "T1046": true
+  },
+  "scope": [
+    {
+      "ip": "(DEVICE_IP)",
+      "name": "(DEVICE_HOSTNAME)",
+      "services": [
+        {
+          "name": "SNMP",
+          "port": "UDP/161"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1016 System Network Configuration Discovery",
+      "url": "https://attack.mitre.org/techniques/T1016/"
+    },
+    {
+      "name": "NIST - SNMP Security",
+      "url": "https://csrc.nist.gov/"
+    }
+  ],
+  "images": [],
+  "description": "Network devices expose SNMP using default or guessable community strings (such as \"public\" or \"private\") over SNMP v1/v2c, which transmit data without encryption. An attacker can read device configuration, routing tables, interfaces, ARP/CAM tables, and sometimes credentials; writable strings may permit configuration changes.",
+  "businessImpact": "Moderate --- disclosed network and device detail aids mapping and targeting; a writable community string can allow device reconfiguration and disruption.",
+  "exploitDetails": "",
+  "remediation": "- Disable SNMP where unused; otherwise migrate to SNMPv3 with authentication and encryption.\n- Replace default community strings with strong, unique values and make strings read-only where possible.\n- Restrict SNMP access to dedicated management hosts and networks via ACLs.\n- Monitor for unauthorized SNMP queries."
+}

@@ -1,0 +1,48 @@
+{
+  "title": "Server-Side Request Forgery (SSRF)",
+  "impact": 3,
+  "likelihood": 2,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "H",
+    "VI": "L",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1190": true
+  },
+  "scope": [
+    {
+      "ip": "(WEB_SERVER_IP)",
+      "name": "(WEB_HOSTNAME)",
+      "services": [
+        {
+          "name": "HTTP",
+          "port": "TCP/80"
+        },
+        {
+          "name": "HTTPS",
+          "port": "TCP/443"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "OWASP - Server Side Request Forgery",
+      "url": "https://owasp.org/www-community/attacks/Server_Side_Request_Forgery"
+    },
+    {
+      "name": "OWASP - SSRF Prevention Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html"
+    }
+  ],
+  "images": [],
+  "description": "The application fetches a remote resource using a user-controlled URL without sufficient validation, allowing an attacker to make the server issue requests to internal services, cloud metadata endpoints, or other restricted destinations. This can expose internal systems and, via cloud metadata, sensitive credentials.",
+  "businessImpact": "High --- SSRF can disclose internal services and cloud credentials, enabling pivoting into otherwise unreachable infrastructure.",
+  "exploitDetails": "",
+  "remediation": "- Validate and allow-list permitted destinations and schemes for server-initiated requests.\n- Block access to internal ranges and cloud metadata endpoints from the application layer.\n- Use network egress controls and dedicated restricted subnets for outbound requests.\n- Disable unused URL schemes and follow-redirect behavior where not required."
+}

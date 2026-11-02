@@ -1,0 +1,48 @@
+{
+  "title": "Anonymous / Open SMTP Relay",
+  "impact": 2,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "L",
+    "VI": "L",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1566": true
+  },
+  "scope": [
+    {
+      "ip": "(MAIL_SERVER_IP)",
+      "name": "(MAIL_HOSTNAME)",
+      "services": [
+        {
+          "name": "SMTP",
+          "port": "TCP/25"
+        },
+        {
+          "name": "SMTP Submission",
+          "port": "TCP/587"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1566 Phishing",
+      "url": "https://attack.mitre.org/techniques/T1566/"
+    },
+    {
+      "name": "M3AAWG - Email Best Practices",
+      "url": "https://www.m3aawg.org/published-documents"
+    }
+  ],
+  "images": [],
+  "description": "The mail server accepts and relays messages from unauthenticated senders to external recipients. Attackers can abuse this to send spoofed or spam email that appears to originate from the organization, damaging reputation and supporting phishing campaigns.",
+  "businessImpact": "Moderate --- abuse can lead to the domain being blacklisted, facilitate convincing phishing against staff or customers, and harm brand reputation.",
+  "exploitDetails": "",
+  "remediation": "- Disable open relaying; require authentication for message submission.\n- Restrict relaying to known, authenticated hosts and networks.\n- Implement SPF, DKIM, and DMARC for the sending domains.\n- Monitor outbound mail volume and alert on anomalies."
+}

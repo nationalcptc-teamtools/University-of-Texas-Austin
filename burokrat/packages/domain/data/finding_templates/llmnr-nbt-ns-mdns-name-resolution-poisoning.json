@@ -1,0 +1,44 @@
+{
+  "title": "LLMNR / NBT-NS / mDNS Name Resolution Poisoning",
+  "impact": 3,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "A",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "H",
+    "VI": "L",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1557.001": true
+  },
+  "scope": [
+    {
+      "ip": "(SUBNET)",
+      "name": "(BROADCAST_SEGMENT)",
+      "services": [
+        {
+          "name": "LLMNR",
+          "port": "UDP/5355"
+        },
+        {
+          "name": "NBT-NS",
+          "port": "UDP/137"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1557.001 LLMNR/NBT-NS Poisoning and SMB Relay",
+      "url": "https://attack.mitre.org/techniques/T1557/001/"
+    }
+  ],
+  "images": [],
+  "description": "Windows falls back to broadcast name-resolution protocols (LLMNR, NBT-NS, mDNS) when DNS lookups fail. An attacker on the same broadcast segment can answer these queries and induce victim systems to authenticate to the attacker, capturing NTLM authentication material for offline cracking or relaying to other hosts.",
+  "businessImpact": "High --- captured or relayed authentication can lead to credential compromise and lateral movement, often as an initial foothold in internal assessments.",
+  "exploitDetails": "",
+  "remediation": "- Disable LLMNR and NBT-NS via Group Policy and DHCP options.\n- Disable mDNS where not required.\n- Require SMB and LDAP signing to prevent relay.\n- Segment networks and monitor for rogue responders."
+}

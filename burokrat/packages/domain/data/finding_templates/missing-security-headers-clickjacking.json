@@ -1,0 +1,48 @@
+{
+  "title": "Missing Security Headers / Clickjacking",
+  "impact": 1,
+  "likelihood": 2,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "A",
+    "VC": "L",
+    "VI": "L",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1189": true
+  },
+  "scope": [
+    {
+      "ip": "(WEB_SERVER_IP)",
+      "name": "(WEB_HOSTNAME)",
+      "services": [
+        {
+          "name": "HTTP",
+          "port": "TCP/80"
+        },
+        {
+          "name": "HTTPS",
+          "port": "TCP/443"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "OWASP - Secure Headers Project",
+      "url": "https://owasp.org/www-project-secure-headers/"
+    },
+    {
+      "name": "OWASP - Clickjacking Defense Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Clickjacking_Defense_Cheat_Sheet.html"
+    }
+  ],
+  "images": [],
+  "description": "The application omits recommended HTTP security response headers (such as Content-Security-Policy, X-Frame-Options/frame-ancestors, X-Content-Type-Options, and Strict-Transport-Security). Missing framing protection in particular allows the site to be embedded by a malicious page for clickjacking.",
+  "businessImpact": "Low --- absence of hardening headers increases exposure to clickjacking, MIME sniffing, and injection attacks, typically as a contributing rather than primary weakness.",
+  "exploitDetails": "",
+  "remediation": "- Set Content-Security-Policy with a frame-ancestors directive (or X-Frame-Options) to prevent framing.\n- Add X-Content-Type-Options: nosniff and a strong Referrer-Policy.\n- Enable Strict-Transport-Security (HSTS) on HTTPS sites.\n- Review headers against the OWASP Secure Headers recommendations."
+}

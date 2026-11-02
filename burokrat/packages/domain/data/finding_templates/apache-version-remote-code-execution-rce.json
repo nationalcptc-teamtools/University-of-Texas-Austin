@@ -1,0 +1,45 @@
+{
+  "title": "Apache <version> Remote Code Execution (RCE)",
+  "impact": 4,
+  "likelihood": 2,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "H"
+  },
+  "mitre": {
+    "T1190": true,
+    "T1203": true
+  },
+  "scope": [
+    {
+      "ip": "(WEB_SERVER_IP)",
+      "name": "(APACHE_HOSTNAME)",
+      "services": [
+        {
+          "name": "Apache HTTP Server",
+          "port": "TCP/80"
+        },
+        {
+          "name": "Apache HTTP Server",
+          "port": "TCP/443"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "Apache Security Reports",
+      "url": "https://httpd.apache.org/security_report.html"
+    }
+  ],
+  "images": [],
+  "description": "Certain Apache versions or modules (e.g., mod\\_php, mod\\_cgid, mod\\_proxy) may contain vulnerabilities that allow remote code execution when exploited with crafted requests.",
+  "businessImpact": "High --- RCE on Apache hosts allows attackers to alter website content, host malicious payloads, or pivot into other internal infrastructure.",
+  "exploitDetails": "",
+  "remediation": "- Upgrade Apache and modules to patched versions.\n- Disable unnecessary modules and enforce secure configuration.\n- Apply WAF filtering rules and network segmentation.\n- Isolate affected web hosts until patched."
+}

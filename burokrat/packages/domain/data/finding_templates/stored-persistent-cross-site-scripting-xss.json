@@ -1,0 +1,48 @@
+{
+  "title": "Stored (Persistent) Cross-Site Scripting (XSS)",
+  "impact": 3,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "L",
+    "UI": "A",
+    "VC": "H",
+    "VI": "L",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1059.007": true
+  },
+  "scope": [
+    {
+      "ip": "(WEB_SERVER_IP)",
+      "name": "(WEB_HOSTNAME)",
+      "services": [
+        {
+          "name": "HTTP",
+          "port": "TCP/80"
+        },
+        {
+          "name": "HTTPS",
+          "port": "TCP/443"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "OWASP - Cross Site Scripting (XSS)",
+      "url": "https://owasp.org/www-community/attacks/xss/"
+    },
+    {
+      "name": "OWASP - XSS Prevention Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"
+    }
+  ],
+  "images": [],
+  "description": "Attacker-supplied script is stored by the application and later rendered to other users without proper output encoding. When a victim views the affected page, the script executes in their browser in the context of the application, enabling session theft, account takeover, or actions performed as the victim, including administrators.",
+  "businessImpact": "High --- persistent XSS can lead to session hijacking, credential theft, and administrative account compromise affecting many users.",
+  "exploitDetails": "",
+  "remediation": "- Context-aware output encoding for all user-controlled data rendered in pages.\n- Validate and sanitize input; use a vetted HTML sanitizer for rich content.\n- Implement a strict Content Security Policy (CSP).\n- Set HttpOnly and Secure flags on session cookies."
+}

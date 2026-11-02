@@ -1,0 +1,45 @@
+{
+  "title": "Unencrypted Storage of Sensitive Employee / Customer Data",
+  "impact": 3,
+  "likelihood": 2,
+  "cvss": {
+    "AV": "L",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "H",
+    "VI": "N",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1005": true,
+    "T1530": true
+  },
+  "scope": [
+    {
+      "ip": "(DATA_STORE_IP)",
+      "name": "(DATA_STORE_HOSTNAME)",
+      "services": [
+        {
+          "name": "Database / File store",
+          "port": "TCP/various"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1005 Data from Local System",
+      "url": "https://attack.mitre.org/techniques/T1005/"
+    },
+    {
+      "name": "NIST SP 800-111 - Storage Encryption",
+      "url": "https://csrc.nist.gov/pubs/sp/800/111/final"
+    }
+  ],
+  "images": [],
+  "description": "Sensitive personal, financial, or business data (such as PII, payment data, or health information) is stored without encryption at rest. Any attacker or insider who gains access to the storage, backups, or media can read the data directly, and the lack of encryption removes a key control against breach impact and regulatory penalties.",
+  "businessImpact": "High --- exposure of regulated or sensitive data can result in breach-notification obligations, regulatory fines (e.g., GDPR, HIPAA, PCI DSS), legal liability, and reputational harm.",
+  "exploitDetails": "",
+  "remediation": "- Encrypt sensitive data at rest using strong algorithms (e.g., AES-256) with managed keys.\n- Apply field/column-level encryption or tokenization for the most sensitive fields.\n- Encrypt backups and portable media, and manage keys separately from the data.\n- Classify data, minimize what is retained, and enforce least-privilege access."
+}

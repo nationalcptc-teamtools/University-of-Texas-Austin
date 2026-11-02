@@ -1,0 +1,48 @@
+{
+  "title": "SQL Injection",
+  "impact": 4,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "L"
+  },
+  "mitre": {
+    "T1190": true
+  },
+  "scope": [
+    {
+      "ip": "(WEB_SERVER_IP)",
+      "name": "(WEB_HOSTNAME)",
+      "services": [
+        {
+          "name": "HTTP",
+          "port": "TCP/80"
+        },
+        {
+          "name": "HTTPS",
+          "port": "TCP/443"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "OWASP - SQL Injection",
+      "url": "https://owasp.org/www-community/attacks/SQL_Injection"
+    },
+    {
+      "name": "OWASP - SQL Injection Prevention Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html"
+    }
+  ],
+  "images": [],
+  "description": "User-controlled input is incorporated into SQL queries without proper parameterization, allowing an attacker to alter query logic. Depending on the context this can disclose or modify database contents, bypass authentication, and in some configurations lead to command execution on the database server.",
+  "businessImpact": "Critical --- exploitation can expose or corrupt entire databases, bypass access controls, and in some cases pivot to the underlying host.",
+  "exploitDetails": "",
+  "remediation": "- Use parameterized queries / prepared statements for all database access.\n- Apply input validation and allow-listing, and use safe ORM query APIs.\n- Enforce least-privilege database accounts and disable dangerous functions.\n- Deploy a WAF as defense-in-depth and conduct code review for injection flaws."
+}

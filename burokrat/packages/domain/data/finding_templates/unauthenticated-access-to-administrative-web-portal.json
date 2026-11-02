@@ -1,0 +1,48 @@
+{
+  "title": "Unauthenticated Access to Administrative Web Portal",
+  "impact": 4,
+  "likelihood": 4,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "H"
+  },
+  "mitre": {
+    "T1190": true
+  },
+  "scope": [
+    {
+      "ip": "(WEB_SERVER_IP)",
+      "name": "(WEB_HOSTNAME)",
+      "services": [
+        {
+          "name": "HTTP",
+          "port": "TCP/80"
+        },
+        {
+          "name": "HTTPS",
+          "port": "TCP/443"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1190 Exploit Public-Facing Application",
+      "url": "https://attack.mitre.org/techniques/T1190/"
+    },
+    {
+      "name": "OWASP - Broken Access Control",
+      "url": "https://owasp.org/Top10/A01_2021-Broken_Access_Control/"
+    }
+  ],
+  "images": [],
+  "description": "An administrative interface or management console is reachable without authentication, or its authentication can be bypassed (for example, by browsing directly to internal pages). This exposes privileged functionality such as configuration, user management, or data access to any user who can reach the endpoint.",
+  "businessImpact": "Critical --- unauthenticated administrative access can lead to full application or system compromise, data exposure, and tampering.",
+  "exploitDetails": "",
+  "remediation": "- Require strong authentication and authorization on every administrative route, enforced server-side.\n- Restrict administrative interfaces to trusted networks or VPN, not the public internet.\n- Apply the principle of least privilege and deny-by-default access control.\n- Add MFA for administrative access and log all administrative actions."
+}

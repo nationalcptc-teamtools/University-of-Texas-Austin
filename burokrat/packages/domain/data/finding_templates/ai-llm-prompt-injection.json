@@ -1,0 +1,42 @@
+{
+  "title": "AI / LLM Prompt Injection",
+  "impact": 3,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "N"
+  },
+  "mitre": {},
+  "scope": [
+    {
+      "ip": "(APP_IP)",
+      "name": "(AI_APPLICATION_HOSTNAME)",
+      "services": [
+        {
+          "name": "LLM Application / API",
+          "port": "TCP/443"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "OWASP Top 10 for LLM Applications - LLM01 Prompt Injection",
+      "url": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/"
+    },
+    {
+      "name": "MITRE ATLAS",
+      "url": "https://atlas.mitre.org/"
+    }
+  ],
+  "images": [],
+  "description": "An application built on a large language model incorporates untrusted input (direct user input or indirect content such as documents, web pages, or emails) into the model's context without adequate separation from trusted instructions. An attacker can craft input that overrides the system's intent, causing the model to ignore its guardrails, disclose system prompts or data, or misuse connected tools and integrations.",
+  "businessImpact": "High --- prompt injection can lead to disclosure of sensitive data, abuse of connected tools or actions, bypass of safety controls, and misinformation delivered to users; indirect injection extends the risk to any content the model processes.",
+  "exploitDetails": "",
+  "remediation": "- Treat all model input, including retrieved/third-party content, as untrusted and separate it from trusted instructions.\n- Constrain model capabilities: least-privilege tool access, human approval for sensitive actions, and strict output handling.\n- Validate and sanitize inputs and outputs; enforce allow-lists for tool parameters and downstream actions.\n- Apply guardrails and monitoring for injection patterns, and avoid placing secrets in the model context.\n- Scope the model's data access to only what the current user is authorized to see."
+}

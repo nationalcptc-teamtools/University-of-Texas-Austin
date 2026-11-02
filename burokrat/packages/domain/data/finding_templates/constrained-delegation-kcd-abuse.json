@@ -1,0 +1,56 @@
+{
+  "title": "Constrained Delegation (KCD) Abuse",
+  "impact": 4,
+  "likelihood": 2,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "H"
+  },
+  "mitre": {
+    "T1558": true
+  },
+  "scope": [
+    {
+      "ip": "(DOMAIN_CONTROLLER_IP)",
+      "name": "(DOMAIN_CONTROLLER_HOSTNAME)",
+      "services": [
+        {
+          "name": "Kerberos",
+          "port": "TCP/88"
+        },
+        {
+          "name": "LDAP",
+          "port": "TCP/389"
+        },
+        {
+          "name": "LDAPS",
+          "port": "TCP/636"
+        },
+        {
+          "name": "SMB",
+          "port": "TCP/445"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1558 Steal or Forge Kerberos Tickets",
+      "url": "https://attack.mitre.org/techniques/T1558/"
+    },
+    {
+      "name": "Microsoft - Kerberos Constrained Delegation",
+      "url": "https://learn.microsoft.com/en-us/windows-server/security/kerberos/kerberos-constrained-delegation-overview"
+    }
+  ],
+  "images": [],
+  "description": "An account configured for Kerberos Constrained Delegation (KCD) can request service tickets on behalf of other users to specified services. When the \"protocol transition\" option (S4U2Self/S4U2Proxy) is enabled, a compromised delegation account can impersonate arbitrary users, including privileged ones, to the configured target services. Misconfigured service lists can expand the impact well beyond the intended scope.",
+  "businessImpact": "Critical --- abuse allows impersonation of privileged users to sensitive services, enabling lateral movement, data access, and potential domain escalation.",
+  "exploitDetails": "",
+  "remediation": "- Limit which accounts are trusted for constrained delegation and to which services.\n- Avoid enabling protocol transition (\"Use any authentication protocol\") unless strictly required.\n- Protect delegation accounts as highly privileged assets and add sensitive users to Protected Users.\n- Audit msDS-AllowedToDelegateTo attributes and review delegation configuration regularly."
+}

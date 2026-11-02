@@ -1,0 +1,40 @@
+{
+  "title": "Anonymous FTP Enabled",
+  "impact": 2,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "L",
+    "VI": "L",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1136": true
+  },
+  "scope": [
+    {
+      "ip": "(FTP_SERVER_IP)",
+      "name": "(FTP_HOSTNAME)",
+      "services": [
+        {
+          "name": "FTP",
+          "port": "TCP/21"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "NIST - FTP Security Considerations",
+      "url": "https://csrc.nist.gov/"
+    }
+  ],
+  "images": [],
+  "description": "Anonymous FTP allows unauthenticated users to connect and potentially upload or download files. If misconfigured, it may be used for exfiltration or hosting malicious content.",
+  "businessImpact": "Moderate --- anonymous access may leak confidential business files or allow attackers to place malicious content; depending on write permissions, it could also enable persistence.",
+  "exploitDetails": "",
+  "remediation": "- Disable anonymous FTP access or restrict to read-only directories.\n- Migrate to authenticated, logged protocols (SFTP/HTTPS).\n- Restrict upload permissions and monitor file activity.\n- Harden FTP configurations and enforce network ACLs."
+}

@@ -1,0 +1,44 @@
+{
+  "title": "Anonymous LDAP Binding",
+  "impact": 2,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "L",
+    "VI": "N",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1087": true
+  },
+  "scope": [
+    {
+      "ip": "(DIRECTORY_IP)",
+      "name": "(DIRECTORY_HOSTNAME)",
+      "services": [
+        {
+          "name": "LDAP",
+          "port": "TCP/389"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1087 Account Discovery",
+      "url": "https://attack.mitre.org/techniques/T1087/"
+    },
+    {
+      "name": "Microsoft - LDAP Signing and Binding",
+      "url": "https://learn.microsoft.com/en-us/troubleshoot/windows-server/active-directory/enable-ldap-signing-in-windows-server"
+    }
+  ],
+  "images": [],
+  "description": "The directory service permits anonymous (unauthenticated) LDAP binds, allowing anyone with network access to query directory objects such as users, groups, and organizational structure. This exposes information useful for reconnaissance and targeted attacks.",
+  "businessImpact": "Moderate --- disclosure of directory information facilitates password spraying, phishing, and privilege-escalation path discovery.",
+  "exploitDetails": "",
+  "remediation": "- Disable anonymous LDAP binds and require authentication for directory queries.\n- Enforce LDAP signing and channel binding (LDAPS).\n- Restrict LDAP access to trusted hosts and networks.\n- Minimize attributes readable by low-privileged or anonymous principals."
+}

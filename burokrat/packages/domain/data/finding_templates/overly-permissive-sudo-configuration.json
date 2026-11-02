@@ -1,0 +1,44 @@
+{
+  "title": "Overly Permissive Sudo Configuration",
+  "impact": 4,
+  "likelihood": 2,
+  "cvss": {
+    "AV": "L",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "H"
+  },
+  "mitre": {
+    "T1548.003": true
+  },
+  "scope": [
+    {
+      "ip": "(LINUX_HOST_IP)",
+      "name": "(LINUX_HOSTNAME)",
+      "services": [
+        {
+          "name": "SSH",
+          "port": "TCP/22"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1548.003 Sudo and Sudo Caching",
+      "url": "https://attack.mitre.org/techniques/T1548/003/"
+    },
+    {
+      "name": "GTFOBins",
+      "url": "https://gtfobins.github.io/"
+    }
+  ],
+  "images": [],
+  "description": "The sudoers configuration grants users the ability to run commands as root in an unsafe manner, for example NOPASSWD access, wildcards, or permission to run binaries that can spawn a shell or write arbitrary files. A low-privileged local user can leverage these grants to escalate to root.",
+  "businessImpact": "Critical --- misconfigured sudo rights allow a standard user to obtain full root privileges on the host.",
+  "exploitDetails": "",
+  "remediation": "- Grant sudo rights only to specific, non-shell-spawning commands and avoid wildcards.\n- Remove NOPASSWD except where strictly justified and documented.\n- Avoid allowing editors, interpreters, or archive tools that enable shell escapes.\n- Audit sudoers regularly and centralize privileged access with logging."
+}

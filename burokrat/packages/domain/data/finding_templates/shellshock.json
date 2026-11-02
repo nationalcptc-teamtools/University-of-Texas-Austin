@@ -1,0 +1,44 @@
+{
+  "title": "Shellshock",
+  "impact": 4,
+  "likelihood": 4,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "AT": "P",
+    "PR": "N",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "H"
+  },
+  "mitre": {
+    "T1059.004": true
+  },
+  "scope": [
+    {
+      "ip": "",
+      "name": "",
+      "services": [
+        {
+          "name": "HTTP",
+          "port": "TCP/80"
+        },
+        {
+          "name": "HTTPS",
+          "port": "TCP/443"
+        },
+        {
+          "name": "SSH",
+          "port": "TCP/22"
+        }
+      ]
+    }
+  ],
+  "references": [],
+  "images": [],
+  "description": "Shellshock (CVE-2014-6271 and related vulnerabilities) is a critical security vulnerability discovered in the GNU Bash (Bourne Again Shell) command-line interpreter. The vulnerability allows attackers to execute arbitrary commands on systems running vulnerable versions of Bash by exploiting how Bash processes specially crafted environment variables. Systems that use Bash in conjunction with web servers, CGI scripts, or other applications that pass user-controlled input into environment variables are particularly at risk. Successful exploitation could allow an unauthenticated remote attacker to execute commands with the privileges of the affected service account, potentially resulting in unauthorized access, data theft, system compromise, or further penetration into the organization's network.",
+  "businessImpact": "Successful exploitation of the Shellshock vulnerability could have a significant impact on business operations by allowing attackers to gain unauthorized access to affected systems and execute malicious commands. This could result in the compromise of sensitive or confidential business information, unauthorized modification or deletion of data, installation of malware, and disruption of critical services. A successful attack could also provide an attacker with a foothold to move further into the organization's network, potentially affecting additional systems and applications. The resulting consequences may include operational downtime, financial losses, regulatory compliance violations, reputational damage, and loss of customer trust. Because Shellshock can potentially be exploited remotely without authentication on exposed vulnerable services, timely patching and verification are essential to reducing organizational risk. \n",
+  "exploitDetails": "",
+  "remediation": "To remediate the Shellshock vulnerability, the organization should identify all Linux, Unix, and other systems running vulnerable versions of GNU Bash and apply the latest security updates provided by the respective operating system vendors. Updates must address the original vulnerability (CVE-2014-6271) as well as related vulnerabilities, including CVE-2014-7169 and other associated Bash flaws. After patching, administrators should verify that the installed Bash version is no longer vulnerable, restart affected services where necessary, and perform vulnerability scans to confirm successful remediation. Systems that cannot be immediately patched should have exposure reduced by restricting access to vulnerable services and disabling unnecessary CGI functionality until updates can be applied. \n\n"
+}

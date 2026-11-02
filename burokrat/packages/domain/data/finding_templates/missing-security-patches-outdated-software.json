@@ -1,0 +1,45 @@
+{
+  "title": "Missing Security Patches / Outdated Software",
+  "impact": 3,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "H"
+  },
+  "mitre": {
+    "T1190": true,
+    "T1203": true
+  },
+  "scope": [
+    {
+      "ip": "(HOST_IP)",
+      "name": "(HOSTNAME)",
+      "services": [
+        {
+          "name": "Various services",
+          "port": "TCP/various"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "CISA - Known Exploited Vulnerabilities Catalog",
+      "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+    },
+    {
+      "name": "NIST - Patch Management (SP 800-40)",
+      "url": "https://csrc.nist.gov/pubs/sp/800/40/r4/final"
+    }
+  ],
+  "images": [],
+  "description": "Systems and applications are running outdated versions with known, published vulnerabilities for which patches are available. Attackers routinely weaponize public exploits for such flaws, and missing patches are among the most common root causes of compromise.",
+  "businessImpact": "High --- unpatched known vulnerabilities provide attackers with reliable, often public, paths to compromise affected systems.",
+  "exploitDetails": "",
+  "remediation": "- Implement a risk-based patch-management program with defined SLAs, prioritizing internet-facing and known-exploited vulnerabilities.\n- Maintain an accurate asset and software inventory.\n- Perform regular authenticated vulnerability scanning and track remediation.\n- Replace or isolate end-of-life software that can no longer receive updates."
+}

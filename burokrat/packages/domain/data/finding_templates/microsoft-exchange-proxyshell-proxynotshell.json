@@ -1,0 +1,45 @@
+{
+  "title": "Microsoft Exchange ProxyShell / ProxyNotShell",
+  "impact": 4,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "H"
+  },
+  "mitre": {
+    "T1190": true,
+    "T1210": true
+  },
+  "scope": [
+    {
+      "ip": "(EXCHANGE_IP)",
+      "name": "(EXCHANGE_HOSTNAME)",
+      "services": [
+        {
+          "name": "HTTPS (OWA/ECP)",
+          "port": "TCP/443"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "CISA - Mitigate Microsoft Exchange ProxyShell",
+      "url": "https://www.cisa.gov/news-events/alerts"
+    },
+    {
+      "name": "Microsoft - Exchange Server Security Updates",
+      "url": "https://techcommunity.microsoft.com/t5/exchange-team-blog/bg-p/Exchange"
+    }
+  ],
+  "images": [],
+  "description": "On-premises Microsoft Exchange servers running vulnerable, unpatched builds are susceptible to chained vulnerabilities (ProxyShell: CVE-2021-34473/34523/31207; ProxyNotShell: CVE-2022-41040/41082) that allow an attacker to reach privileged endpoints and achieve remote code execution. Exchange is a high-value target that frequently yields domain-level access.",
+  "businessImpact": "Critical --- exploitation can lead to remote code execution on the Exchange server, mailbox access, and privilege escalation toward domain compromise.",
+  "exploitDetails": "",
+  "remediation": "- Apply the latest Exchange cumulative and security updates for all affected servers.\n- Apply Microsoft-recommended URL rewrite / interim mitigations until patched.\n- Restrict external access to administrative endpoints (ECP) and consider Exchange Online migration.\n- Hunt for web shells and indicators of compromise on Exchange servers."
+}

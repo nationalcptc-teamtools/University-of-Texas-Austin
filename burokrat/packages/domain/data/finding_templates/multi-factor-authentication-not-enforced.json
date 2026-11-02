@@ -1,0 +1,48 @@
+{
+  "title": "Multi-Factor Authentication Not Enforced",
+  "impact": 3,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1078": true
+  },
+  "scope": [
+    {
+      "ip": "(SERVICE_IP)",
+      "name": "(SERVICE_HOSTNAME)",
+      "services": [
+        {
+          "name": "Remote Access / Portal",
+          "port": "TCP/443"
+        },
+        {
+          "name": "VPN",
+          "port": "UDP/500"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1078 Valid Accounts",
+      "url": "https://attack.mitre.org/techniques/T1078/"
+    },
+    {
+      "name": "CISA - Multi-Factor Authentication",
+      "url": "https://www.cisa.gov/MFA"
+    }
+  ],
+  "images": [],
+  "description": "Authentication to sensitive services (such as VPN, webmail, remote access, administrative portals, or cloud consoles) relies on a password alone, without a second factor. This leaves accounts fully exposed to credential theft, phishing, password spraying, and reuse of breached credentials.",
+  "businessImpact": "High --- without MFA, a single compromised password grants attacker access to the service, which is a leading cause of breaches.",
+  "exploitDetails": "",
+  "remediation": "- Enforce phishing-resistant MFA (e.g., FIDO2/WebAuthn) for all remote access, administrative, and cloud accounts.\n- Prioritize internet-facing and privileged access for immediate MFA rollout.\n- Disable legacy authentication protocols that bypass MFA.\n- Monitor and alert on MFA failures and anomalous sign-ins."
+}

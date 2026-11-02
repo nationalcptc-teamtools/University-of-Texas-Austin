@@ -1,0 +1,48 @@
+{
+  "title": "Sensitive Data Transmitted in Cleartext (No TLS/SSL)",
+  "impact": 2,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "A",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "H",
+    "VI": "L",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1040": true
+  },
+  "scope": [
+    {
+      "ip": "(HOST_IP)",
+      "name": "(HOSTNAME)",
+      "services": [
+        {
+          "name": "HTTP",
+          "port": "TCP/80"
+        },
+        {
+          "name": "Other plaintext",
+          "port": "TCP/various"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1040 Network Sniffing",
+      "url": "https://attack.mitre.org/techniques/T1040/"
+    },
+    {
+      "name": "OWASP - Transport Layer Security Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html"
+    }
+  ],
+  "images": [],
+  "description": "Services transmit sensitive data (credentials, session tokens, personal or business data) over unencrypted protocols such as HTTP, Telnet, FTP, or unencrypted LDAP. An attacker able to observe network traffic can intercept this data or hijack sessions.",
+  "businessImpact": "Moderate --- interception of credentials or session material can lead to account compromise and disclosure of sensitive information.",
+  "exploitDetails": "",
+  "remediation": "- Enforce TLS for all services that handle sensitive data and redirect plaintext to secure equivalents (HTTPS, SFTP, LDAPS, SSH).\n- Use HSTS for web applications and disable legacy plaintext protocols.\n- Use modern TLS versions (1.2+) and strong cipher suites with valid certificates.\n- Protect internal traffic as well as perimeter traffic."
+}

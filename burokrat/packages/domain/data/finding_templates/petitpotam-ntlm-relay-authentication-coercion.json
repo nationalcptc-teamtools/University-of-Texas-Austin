@@ -1,0 +1,57 @@
+{
+  "title": "PetitPotam / NTLM Relay (Authentication Coercion)",
+  "impact": 4,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1187": true,
+    "T1557.001": true
+  },
+  "scope": [
+    {
+      "ip": "(DOMAIN_CONTROLLER_IP)",
+      "name": "(DOMAIN_CONTROLLER_HOSTNAME)",
+      "services": [
+        {
+          "name": "Kerberos",
+          "port": "TCP/88"
+        },
+        {
+          "name": "LDAP",
+          "port": "TCP/389"
+        },
+        {
+          "name": "LDAPS",
+          "port": "TCP/636"
+        },
+        {
+          "name": "SMB",
+          "port": "TCP/445"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1187 Forced Authentication",
+      "url": "https://attack.mitre.org/techniques/T1187/"
+    },
+    {
+      "name": "Microsoft - KB5005413 NTLM Relay Mitigation",
+      "url": "https://support.microsoft.com/en-us/topic/kb5005413-mitigating-ntlm-relay-attacks-on-active-directory-certificate-services-ad-cs-3612b773-4043-4aa9-b23d-b87910cd3429"
+    }
+  ],
+  "images": [],
+  "description": "Authentication-coercion techniques (such as PetitPotam via MS-EFSRPC) force a Windows host, including a Domain Controller, to authenticate to an attacker-controlled machine using NTLM. The relayed authentication can then be forwarded to a service that does not enforce signing or channel binding, most notably Active Directory Certificate Services (AD CS) web enrollment, to obtain a certificate and impersonate the victim machine, leading to domain compromise.",
+  "businessImpact": "Critical --- relaying a coerced Domain Controller authentication to AD CS can yield a certificate for the DC and result in full domain takeover.",
+  "exploitDetails": "",
+  "remediation": "- Enable Extended Protection for Authentication (EPA) and require HTTPS on AD CS enrollment endpoints.\n- Enforce SMB signing and LDAP signing/channel binding across the domain.\n- Disable NTLM where possible and restrict it via policy.\n- Apply patches addressing EFSRPC/coercion vectors and monitor for anomalous machine authentication."
+}

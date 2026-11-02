@@ -1,0 +1,49 @@
+{
+  "title": "Local File Inclusion (LFI) / Path Traversal",
+  "impact": 3,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "H",
+    "VI": "N",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1083": true,
+    "T1190": true
+  },
+  "scope": [
+    {
+      "ip": "(WEB_SERVER_IP)",
+      "name": "(WEB_HOSTNAME)",
+      "services": [
+        {
+          "name": "HTTP",
+          "port": "TCP/80"
+        },
+        {
+          "name": "HTTPS",
+          "port": "TCP/443"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "OWASP - Path Traversal",
+      "url": "https://owasp.org/www-community/attacks/Path_Traversal"
+    },
+    {
+      "name": "OWASP - File Inclusion",
+      "url": "https://owasp.org/www-project-web-security-testing-guide/"
+    }
+  ],
+  "images": [],
+  "description": "The application includes or reads files using a user-controlled path without proper validation, allowing an attacker to traverse the filesystem and read arbitrary files (such as configuration files or credentials). In certain configurations, inclusion of attacker-influenced content can escalate to code execution.",
+  "businessImpact": "High --- disclosure of sensitive files such as configuration and credential stores can enable further compromise, and some setups allow escalation to code execution.",
+  "exploitDetails": "",
+  "remediation": "- Avoid passing user input to file-system or include paths; map input to a fixed allow-list of identifiers.\n- Canonicalize and validate paths, rejecting traversal sequences.\n- Run the application with least privilege and restrict file-system access.\n- Disable dangerous language features (e.g., remote includes) and store sensitive files outside web-accessible paths."
+}

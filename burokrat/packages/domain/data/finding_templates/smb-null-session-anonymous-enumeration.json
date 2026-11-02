@@ -1,0 +1,45 @@
+{
+  "title": "SMB Null Session / Anonymous Enumeration",
+  "impact": 2,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "L",
+    "VI": "N",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1087": true,
+    "T1135": true
+  },
+  "scope": [
+    {
+      "ip": "(HOST_IP)",
+      "name": "(HOSTNAME)",
+      "services": [
+        {
+          "name": "SMB",
+          "port": "TCP/445"
+        },
+        {
+          "name": "NetBIOS",
+          "port": "TCP/139"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1135 Network Share Discovery",
+      "url": "https://attack.mitre.org/techniques/T1135/"
+    }
+  ],
+  "images": [],
+  "description": "A null (anonymous) SMB session allows an unauthenticated attacker to enumerate information such as user accounts, groups, shares, and password policy. This information significantly aids subsequent attacks such as password spraying and targeted social engineering.",
+  "businessImpact": "Moderate --- disclosed account and configuration data accelerates further attacks, though the finding alone does not grant access.",
+  "exploitDetails": "",
+  "remediation": "- Restrict anonymous access (RestrictAnonymous / RestrictAnonymousSAM) via policy.\n- Disable SMBv1 and NetBIOS over TCP/IP where not required.\n- Limit share and account enumeration to authenticated principals.\n- Segment and firewall SMB/NetBIOS services from untrusted networks."
+}

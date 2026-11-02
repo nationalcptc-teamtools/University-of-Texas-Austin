@@ -1,0 +1,44 @@
+{
+  "title": "SMB Signing Not Required",
+  "impact": 3,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "A",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1557.001": true
+  },
+  "scope": [
+    {
+      "ip": "(HOST_IP)",
+      "name": "(HOSTNAME)",
+      "services": [
+        {
+          "name": "SMB",
+          "port": "TCP/445"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1557.001 LLMNR/NBT-NS Poisoning and SMB Relay",
+      "url": "https://attack.mitre.org/techniques/T1557/001/"
+    },
+    {
+      "name": "Microsoft - Overview of SMB Signing",
+      "url": "https://learn.microsoft.com/en-us/windows-server/storage/file-server/smb-signing"
+    }
+  ],
+  "images": [],
+  "description": "Hosts that do not require SMB signing are vulnerable to adversary-in-the-middle and NTLM relay attacks. An attacker positioned on the network (often via LLMNR/NBT-NS poisoning) can relay captured SMB authentication to other hosts that also lack signing, authenticating as the victim and potentially executing commands.",
+  "businessImpact": "High --- relayed authentication can grant access to file shares or administrative access to other systems, enabling lateral movement and data compromise.",
+  "exploitDetails": "",
+  "remediation": "- Require SMB signing on all servers and clients via Group Policy.\n- Disable LLMNR and NBT-NS to reduce authentication-poisoning opportunities.\n- Disable SMBv1 entirely.\n- Restrict and segment SMB traffic, and enforce the use of authenticated, signed protocols."
+}

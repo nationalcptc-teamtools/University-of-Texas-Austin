@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.output/
+.tanstack/
+.DS_Store
+.vscode
+*.log
+*.pdf
+.env
+.env.local
+.env.*.local
+
+# App data
+apps/web/data/
+
+# Test output
+apps/web/test-results/
+apps/web/playwright-report/
+apps/web/.vitest/

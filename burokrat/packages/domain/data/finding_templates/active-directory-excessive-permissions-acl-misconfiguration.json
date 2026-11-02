@@ -1,0 +1,57 @@
+{
+  "title": "Active Directory Excessive Permissions / ACL Misconfiguration",
+  "impact": 4,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "H"
+  },
+  "mitre": {
+    "T1484": true,
+    "T1098": true
+  },
+  "scope": [
+    {
+      "ip": "(DOMAIN_CONTROLLER_IP)",
+      "name": "(DOMAIN_CONTROLLER_HOSTNAME)",
+      "services": [
+        {
+          "name": "Kerberos",
+          "port": "TCP/88"
+        },
+        {
+          "name": "LDAP",
+          "port": "TCP/389"
+        },
+        {
+          "name": "LDAPS",
+          "port": "TCP/636"
+        },
+        {
+          "name": "SMB",
+          "port": "TCP/445"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1098 Account Manipulation",
+      "url": "https://attack.mitre.org/techniques/T1098/"
+    },
+    {
+      "name": "Microsoft - Securing Active Directory",
+      "url": "https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/plan/security-best-practices/best-practices-for-securing-active-directory"
+    }
+  ],
+  "images": [],
+  "description": "Excessive or misconfigured Access Control Entries on Active Directory objects (such as GenericAll, GenericWrite, WriteDacl, WriteOwner, or the right to reset passwords) allow lower-privileged principals to take control of higher-privileged users, groups, or computers. Chains of such delegated rights frequently create unintended paths from a standard user to Domain Admin. Over-permissive group nesting and stale privileged memberships compound the risk.",
+  "businessImpact": "Critical --- abusable permission chains can lead to takeover of privileged accounts and complete compromise of the directory.",
+  "exploitDetails": "",
+  "remediation": "- Enforce least privilege and regularly review ACLs on users, groups, OUs, and the domain root.\n- Remove dangerous rights (WriteDacl, WriteOwner, GenericAll) granted to non-administrative principals.\n- Flatten and review group nesting; remove stale members of privileged groups.\n- Use tiered administration and a dedicated admin forest/model for Tier 0 assets.\n- Continuously map attack paths (e.g., with BloodHound) and remediate the shortest paths to Tier 0."
+}

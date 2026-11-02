@@ -1,0 +1,48 @@
+{
+  "title": "Directory Listing / Verbose Error Information Disclosure",
+  "impact": 1,
+  "likelihood": 3,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "N",
+    "VC": "L",
+    "VI": "N",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1083": true
+  },
+  "scope": [
+    {
+      "ip": "(WEB_SERVER_IP)",
+      "name": "(WEB_HOSTNAME)",
+      "services": [
+        {
+          "name": "HTTP",
+          "port": "TCP/80"
+        },
+        {
+          "name": "HTTPS",
+          "port": "TCP/443"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "OWASP - Information Disclosure",
+      "url": "https://owasp.org/www-project-web-security-testing-guide/"
+    },
+    {
+      "name": "OWASP - Improper Error Handling",
+      "url": "https://owasp.org/www-community/Improper_Error_Handling"
+    }
+  ],
+  "images": [],
+  "description": "The web server exposes directory listings or returns verbose error messages and stack traces containing internal paths, software versions, or configuration detail. This information aids an attacker in mapping the application and identifying further weaknesses.",
+  "businessImpact": "Low --- disclosed structure and technology detail facilitate targeted attacks, though the issue alone does not grant access.",
+  "exploitDetails": "",
+  "remediation": "- Disable automatic directory listing on the web server.\n- Return generic error pages to clients and log detailed errors server-side only.\n- Remove version banners and unnecessary metadata from responses.\n- Restrict access to backup, source, and configuration files."
+}

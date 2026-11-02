@@ -1,0 +1,40 @@
+{
+  "title": "Scheduled Task Persistence",
+  "impact": 2,
+  "likelihood": 2,
+  "cvss": {
+    "AV": "L",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "L",
+    "VI": "H",
+    "VA": "L"
+  },
+  "mitre": {
+    "T1053.005": true
+  },
+  "scope": [
+    {
+      "ip": "(WINDOWS_HOST_IP)",
+      "name": "(WINDOWS_HOSTNAME)",
+      "services": [
+        {
+          "name": "Windows Host",
+          "port": "N/A"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1053.005 Scheduled Task",
+      "url": "https://attack.mitre.org/techniques/T1053/005/"
+    }
+  ],
+  "images": [],
+  "description": "Windows Scheduled Tasks can be created or modified to execute attacker-controlled code at logon, on a schedule, or on specified events, providing a durable persistence mechanism. Weak permissions on task definitions or on the programs they invoke can also enable privilege escalation.",
+  "businessImpact": "Moderate --- scheduled tasks give an attacker reliable persistence and, when running as a privileged account, a route to code execution with elevated rights.",
+  "exploitDetails": "",
+  "remediation": "- Baseline and monitor scheduled tasks; alert on creation or modification of tasks.\n- Restrict permissions on task definitions and the executables/scripts they run.\n- Enforce least privilege for accounts used to run tasks.\n- Investigate unexpected tasks as potential indicators of compromise."
+}

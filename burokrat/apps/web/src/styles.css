@@ -1,0 +1,44 @@
+@source "../node_modules/@cloudflare/kumo/dist/**/*.{js,jsx,ts,tsx}";
+@import "@cloudflare/kumo/styles";
+@import "tailwindcss";
+@import "@fontsource-variable/hanken-grotesk";
+
+@theme {
+  --font-sans: "Hanken Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  color-scheme: light dark;
+}
+html[data-mode="light"] {
+  color-scheme: light;
+}
+html[data-mode="dark"] {
+  color-scheme: dark;
+}
+
+.presence-0 {
+  --presence: #e5484d;
+}
+.presence-1 {
+  --presence: #f76b15;
+}
+.presence-2 {
+  --presence: #ffc53d;
+  --presence-ink: #4a3200;
+}
+.presence-3 {
+  --presence: #30a46c;
+}
+.presence-4 {
+  --presence: #12a594;
+}
+.presence-5 {
+  --presence: #0090ff;
+}
+.presence-6 {
+  --presence: #8e4ec6;
+}
+.presence-7 {
+  --presence: #d6409f;
+}

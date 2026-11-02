@@ -1,0 +1,48 @@
+{
+  "title": "Cross-Site Request Forgery (CSRF)",
+  "impact": 2,
+  "likelihood": 2,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "N",
+    "UI": "A",
+    "VC": "L",
+    "VI": "H",
+    "VA": "N"
+  },
+  "mitre": {
+    "T1190": true
+  },
+  "scope": [
+    {
+      "ip": "(WEB_SERVER_IP)",
+      "name": "(WEB_HOSTNAME)",
+      "services": [
+        {
+          "name": "HTTP",
+          "port": "TCP/80"
+        },
+        {
+          "name": "HTTPS",
+          "port": "TCP/443"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "OWASP - Cross-Site Request Forgery",
+      "url": "https://owasp.org/www-community/attacks/csrf"
+    },
+    {
+      "name": "OWASP - CSRF Prevention Cheat Sheet",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html"
+    }
+  ],
+  "images": [],
+  "description": "State-changing requests are not protected against forgery, allowing an attacker to craft a page that causes an authenticated victim's browser to submit unwanted actions to the application. The action executes with the victim's privileges without their intent.",
+  "businessImpact": "Moderate --- an attacker can induce authenticated users to perform unwanted actions such as changing settings or data, with greater impact for administrative users.",
+  "exploitDetails": "",
+  "remediation": "- Use anti-CSRF tokens (synchronizer token pattern) for all state-changing requests.\n- Set SameSite=Lax or Strict on session cookies.\n- Require re-authentication or verification for sensitive actions.\n- Validate the Origin/Referer header for sensitive endpoints."
+}

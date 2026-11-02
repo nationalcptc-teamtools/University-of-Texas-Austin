@@ -1,0 +1,46 @@
+{
+  "title": "Windows Service Misconfiguration (Unquoted Path / Weak Permissions)",
+  "impact": 4,
+  "likelihood": 2,
+  "cvss": {
+    "AV": "L",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "H"
+  },
+  "mitre": {
+    "T1543.003": true,
+    "T1574.009": true,
+    "T1574.010": true
+  },
+  "scope": [
+    {
+      "ip": "(WINDOWS_HOST_IP)",
+      "name": "(WINDOWS_HOSTNAME)",
+      "services": [
+        {
+          "name": "Windows Host",
+          "port": "N/A"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1574.009 Path Interception by Unquoted Path",
+      "url": "https://attack.mitre.org/techniques/T1574/009/"
+    },
+    {
+      "name": "MITRE ATT&CK - T1574.010 Services File Permissions Weakness",
+      "url": "https://attack.mitre.org/techniques/T1574/010/"
+    }
+  ],
+  "images": [],
+  "description": "Windows services are configured with weak permissions that allow a low-privileged user to modify the service binary, its configuration, or its executable path, or with unquoted service paths containing spaces that permit path interception. Because services typically run as SYSTEM, a local user can leverage these weaknesses to execute code with elevated privileges.",
+  "businessImpact": "Critical --- service misconfigurations allow a standard user to escalate to SYSTEM and to establish persistence on the host.",
+  "exploitDetails": "",
+  "remediation": "- Quote all service executable paths that contain spaces.\n- Restrict permissions on service binaries, directories, and registry keys to administrators.\n- Remove write/modify rights to service configuration from non-privileged users.\n- Audit services with tooling and run services under least-privileged accounts."
+}

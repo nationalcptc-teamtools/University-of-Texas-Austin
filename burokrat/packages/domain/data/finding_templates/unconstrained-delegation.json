@@ -1,0 +1,57 @@
+{
+  "title": "Unconstrained Delegation",
+  "impact": 4,
+  "likelihood": 2,
+  "cvss": {
+    "AV": "N",
+    "AC": "L",
+    "PR": "L",
+    "UI": "N",
+    "VC": "H",
+    "VI": "H",
+    "VA": "H"
+  },
+  "mitre": {
+    "T1558": true,
+    "T1134": true
+  },
+  "scope": [
+    {
+      "ip": "(DOMAIN_CONTROLLER_IP)",
+      "name": "(DOMAIN_CONTROLLER_HOSTNAME)",
+      "services": [
+        {
+          "name": "Kerberos",
+          "port": "TCP/88"
+        },
+        {
+          "name": "LDAP",
+          "port": "TCP/389"
+        },
+        {
+          "name": "LDAPS",
+          "port": "TCP/636"
+        },
+        {
+          "name": "SMB",
+          "port": "TCP/445"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "MITRE ATT&CK - T1558 Steal or Forge Kerberos Tickets",
+      "url": "https://attack.mitre.org/techniques/T1558/"
+    },
+    {
+      "name": "Microsoft - Kerberos Delegation",
+      "url": "https://learn.microsoft.com/en-us/windows-server/security/kerberos/kerberos-constrained-delegation-overview"
+    }
+  ],
+  "images": [],
+  "description": "A host configured for unconstrained delegation caches the Kerberos Ticket-Granting Tickets (TGTs) of any user that authenticates to it. An attacker who compromises such a host can extract cached TGTs, including those of privileged users and Domain Controllers, and impersonate them anywhere in the domain. Coercing a Domain Controller to authenticate to the host can lead to full domain compromise.",
+  "businessImpact": "Critical --- extraction of a Domain Controller or Domain Admin TGT enables impersonation of any principal and typically results in complete compromise of the Active Directory environment.",
+  "exploitDetails": "",
+  "remediation": "- Remove unconstrained delegation from all accounts and computers; use constrained or resource-based constrained delegation instead.\n- Add sensitive and privileged accounts to the Protected Users group and mark them as \"Account is sensitive and cannot be delegated\".\n- Restrict and monitor which hosts are trusted for delegation.\n- Patch and monitor for authentication coercion techniques used to trigger DC authentication."
+}
