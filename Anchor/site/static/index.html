@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anchor Triage</title>
+<link rel="stylesheet" href="vendor/pico.min.css">
+<style>
+  :root { --pico-font-size: 90%; }
+  body > header, body > main { max-width: none; padding: 0.6rem 1rem; }
+  .bar { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+  .bar > * { margin: 0; }
+  .grow { flex: 1; }
+  .layout { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  .layout.split { grid-template-columns: minmax(0,1.7fr) minmax(340px,1fr); }
+  table { font-size: .92em; } figure { margin: 0; overflow-x: auto; }
+  tbody tr.row { cursor: pointer; }
+  tbody tr.sel { outline: 2px solid var(--pico-primary); }
+  td select, td input { margin: 0; padding: .1rem .3rem; font-size: .9em; height: auto; min-width: 6.2rem; }
+  td input { min-width: 6rem; }
+  .sev { font-weight: 700; text-transform: uppercase; font-size: .72em; padding: .1rem .4rem;
+         border-radius: .25rem; color: #111; white-space: nowrap; }
+  .sev.critical { background: #ff5370; } .sev.high { background: #ff9e64; }
+  .sev.medium   { background: #ffd166; } .sev.low  { background: #a9d6a0; }
+  .sev.info     { background: #8bb8d9; } .sev.unknown { background: #999; }
+  .muted { color: var(--pico-muted-color); }
+  .hosts { font-family: var(--pico-font-family-monospace); font-size: .82em; }
+  .group-h td { background: var(--pico-card-background-color); font-weight: 700; letter-spacing: .03em;
+                border-top: 2px solid var(--pico-primary); padding-top: .5rem; }
+  .detail { position: sticky; top: .5rem; max-height: calc(100vh - 1rem); overflow: auto; }
+  .note { border-left: 3px solid var(--pico-muted-border-color); padding: .1rem .6rem; margin: .4rem 0; }
+  .note small { color: var(--pico-muted-color); }
+  .pill { font-size: .78em; padding: .05rem .4rem; border-radius: 1rem; background: #2a2f3a; white-space: nowrap; }
+  .ev { border: 1px solid var(--pico-muted-border-color); border-radius: .4rem; padding: .4rem .6rem; margin: .4rem 0; }
+  .shot { max-width: 100%; border-radius: .3rem; display: block; margin: .2rem 0; }
+  .dot { display: inline-block; width: .5rem; height: .5rem; border-radius: 50%; background: var(--pico-primary);
+         margin-left: .25rem; vertical-align: middle; }
+  #scanbar { position: fixed; top: 0; left: 0; height: 3px; background: var(--pico-primary); z-index: 200;
+             transition: width .4s ease, opacity .4s; }
+  pre.logs { white-space: pre-wrap; word-break: break-word; font-size: .78em; max-height: calc(100vh - 7rem);
+             overflow: auto; background: var(--pico-code-background-color); padding: .5rem; border-radius: .3rem; }
+  details.logsec { border: 1px solid var(--pico-muted-border-color); border-radius: .4rem; margin: .3rem 0; }
+  details.logsec > summary { cursor: pointer; padding: .4rem .6rem; font-weight: 600; }
+  pre.logs.sec { max-height: 28rem; margin: 0 .4rem .4rem; }
+  .cmd { display: flex; gap: .4rem; align-items: flex-start; }
+  .cmd code { flex: 1; white-space: pre-wrap; word-break: break-all; font-size: .8em; }
+  .cmd button { width: auto; padding: .05rem .5rem; margin: 0; font-size: .75em; }
+  pre.raw { white-space: pre-wrap; word-break: break-all; font-size: .76em; max-height: 20rem; overflow: auto;
+            background: var(--pico-code-background-color); padding: .4rem; border-radius: .3rem; }
+  nav a { cursor: pointer; } nav a.active { font-weight: 700; color: var(--pico-primary); }
+  .linkfind { cursor: pointer; }
+</style>
+</head>
+<body x-data="triage()">
+<div id="scanbar" :style="`width:${prog.pct}%;opacity:${prog.running?1:0}`"></div>
+<header>
+  <div class="bar">
+    <strong>Anchor Triage</strong>
+    <nav class="grow"><ul>
+      <li><a @click="view='queue'" :class="{active: view==='queue'}">Queue<span class="dot" x-show="hasNewF"></span></a></li>
+      <li><a @click="view='machines'" :class="{active: view==='machines'}">Machines<span class="dot" x-show="hasNewM"></span></a></li>
+      <li><a @click="view='report'" :class="{active: view==='report'}">Report</a></li>
+      <li><a @click="view='logs'; loadLog()" :class="{active: view==='logs'}">Logs</a></li>
+      <li x-show="prog.bhce"><a :href="`http://${window.location.hostname}:${prog.bhce_port}/ui`" target="_blank" title="open BloodHound CE">BloodHound ↗</a></li>
+    </ul></nav>
+    <span class="muted" x-show="prog.running" x-text="'● scanning: '+prog.stage" style="white-space:nowrap"></span>
+    <span class="muted" x-show="view==='queue'" x-text="`${filtered.length}/${findings.length} findings`"></span>
+    <span class="muted" x-show="view==='machines'" x-text="`${visibleMachines.length} machines`"></span>
+    <span class="muted" x-show="view==='report'" x-text="`${reportTodo.length} to write`"></span>
+    <input type="text" placeholder="your name (for notes)" x-model="author" @change="saveAuthor()" style="max-width:12rem">
+    <a :href="view==='machines' ? '/api/export/machines.csv' : '/api/export/findings.csv'" role="button"
+       class="secondary outline" style="white-space:nowrap" title="export to CSV — import into Google Sheets (File → Import)">CSV</a>
+    <button class="secondary outline" @click="reingest()" title="re-scan the 40-report tree">↻ Re-ingest</button>
+  </div>
+</header>
+
+<!-- ============================ QUEUE ============================ -->
+<main x-show="view==='queue'">
+  <div class="bar" style="margin-bottom:.6rem">
+    <select x-model="f.status" style="flex:1 1 6rem;min-width:5.5rem"><option value="">status: all</option>
+      <option>New</option><option>Triaging</option><option>Confirmed</option><option>Dismissed</option><option>In report</option></select>
+    <select x-model="f.sev" style="flex:1 1 6rem;min-width:5.5rem"><option value="">severity: all</option>
+      <option>critical</option><option>high</option><option>medium</option><option>low</option><option>info</option></select>
+    <select x-model="f.source" style="flex:1 1 6rem;min-width:5.5rem"><option value="">source: all</option>
+      <template x-for="s in sources" :key="s"><option x-text="s" :value="s"></option></template></select>
+    <input type="text" placeholder="assignee" x-model="f.assignee" style="flex:0 1 8rem">
+    <input type="search" placeholder="filter by type or host…" x-model="f.q" style="flex:2 1 10rem">
+    <a class="linkfind muted" @click="clearFilters()" title="clear all filters" style="white-space:nowrap">✕ filters</a>
+    <button class="outline" @click="newForm=!newForm" style="white-space:nowrap;width:auto;padding:.2rem .6rem">+ New finding</button>
+  </div>
+
+  <article x-show="newForm" style="padding:.6rem .8rem;margin-bottom:.6rem">
+    <div class="bar" style="margin-bottom:.4rem">
+      <input type="text" x-model="nf.type" placeholder="finding name / type" style="flex:2 1 12rem">
+      <select x-model="nf.sev" style="flex:0 1 8rem">
+        <option>critical</option><option>high</option><option>medium</option><option>low</option><option>info</option></select>
+    </div>
+    <div class="bar" style="margin-bottom:.4rem">
+      <select x-model="nf.pick" @change="addNewHost(nf.pick); nf.pick=''" style="flex:1 1 100%"><option value="">pick host(s)…</option>
+        <template x-for="m in machines" :key="m.ip"><option :value="m.ip" x-text="m.ip+(m.hostname?' ('+m.hostname+')':'')"></option></template></select>
+    </div>
+    <div class="bar" style="margin-bottom:.4rem" x-show="nf.hosts.length">
+      <template x-for="(h,i) in nf.hosts" :key="h"><span class="pill"><span x-text="h"></span>
+        <a class="linkfind" @click="nf.hosts.splice(i,1)">✕</a></span></template>
+    </div>
+    <div class="bar">
+      <span class="muted grow"><small x-text="'src: manual ('+(author||'anon')+')  ·  status: Triaging  ·  assignee: '+(author||'anon')"></small></span>
+      <button @click="createFinding()" :disabled="!nf.type.trim()" style="width:auto;padding:.2rem .8rem">Create</button>
+    </div>
+  </article>
+
+  <div class="layout" :class="{ split: sel }">
+    <figure>
+      <table>
+        <thead><tr><th>Sev</th><th>Finding</th><th>Hosts</th><th>Src</th><th>Status</th><th>Assignee</th></tr></thead>
+        <!-- one <tbody> per status group (#5): New first, then Triaging, Confirmed, Dismissed, In report -->
+        <template x-for="sec in grouped" :key="sec.status">
+          <tbody>
+            <tr class="group-h" @click="toggle(sec.status)" style="cursor:pointer">
+              <td colspan="6" x-text="`${collapsed[sec.status]?'▸':'▾'} ${sec.status} · ${sec.items.length}`"></td></tr>
+            <template x-for="x in sec.items" :key="x.id">
+              <tr class="row" x-show="!collapsed[sec.status]" :class="{ sel: x.id===sel }" @click="open(x, $event)">
+                <td><span class="sev" :class="x.severity" x-text="x.severity"></span></td>
+                <td><span x-text="(x.name||x.type) + (x.count>1?` (${x.count})`:'')"></span><span class="dot" x-show="newF[x.id]" title="new"></span></td>
+                <td class="hosts" @click.stop>
+                  <template x-for="(hl,i) in x.hosts_links" :key="i"><span
+                    ><a x-show="hl.ip" class="linkfind" @click="gotoMachine(hl.ip)" x-text="hl.label" title="open machine"></a
+                    ><span x-show="!hl.ip" x-text="hl.label"></span
+                    ><span x-show="i < x.hosts_links.length-1" x-text="', '"></span></span></template>
+                </td>
+                <td class="muted" x-text="x.source"></td>
+                <td @click.stop><select x-model="x.status" @change="setStatus(x)">
+                  <option>New</option><option>Triaging</option><option>Confirmed</option><option>Dismissed</option><option>In report</option></select></td>
+                <td @click.stop><input type="text" x-model="x.assignee" @change="setAssignee(x)" placeholder="—"></td>
+              </tr>
+            </template>
+          </tbody>
+        </template>
+        <tbody x-show="!filtered.length"><tr><td colspan="6" class="muted">No findings match. Run a scan, or Re-ingest.</td></tr></tbody>
+      </table>
+    </figure>
+
+    <!-- finding detail + evidence (#4). x-if (not x-show) so bindings don't evaluate against null. -->
+    <template x-if="sel && selData"><div class="detail">
+      <article>
+        <header class="bar">
+          <span class="sev" :class="selData?.severity" x-text="selData?.severity"></span>
+          <strong class="grow" x-text="selData?.name || selData?.type"></strong>
+          <a class="linkfind" @click="sel=null">✕</a>
+        </header>
+        <p x-show="selData?.summary" x-text="selData?.summary" style="white-space:pre-wrap"></p>
+        <p>
+          <span class="pill" x-text="'source: '+selData?.source"></span>
+          <span class="pill" x-text="'confidence: '+selData?.confidence"></span>
+          <span class="pill" x-text="'first seen: '+selData?.first_seen_run"></span>
+        </p>
+        <p class="hosts"><strong>Hosts:</strong> <span x-text="selData?.hosts_label?.join(', ')"></span></p>
+
+        <div class="bar">
+          <label class="grow">Status
+            <select x-model="selData.status" @change="setStatus(selData); syncRow(selData)">
+              <option>New</option><option>Triaging</option><option>Confirmed</option><option>Dismissed</option><option>In report</option></select></label>
+          <label class="grow">Assignee
+            <input type="text" x-model="selData.assignee" @change="setAssignee(selData); syncRow(selData)" placeholder="unassigned"></label>
+        </div>
+
+        <h6>Evidence <span class="muted" x-show="selData?.evidence?.length" x-text="`(${selData.evidence.length})`"></span></h6>
+        <p x-show="!selData?.evidence?.length" class="muted">No raw evidence found for this finding.</p>
+        <template x-for="(e,i) in selData?.evidence" :key="i">
+          <div class="ev">
+            <div class="hosts muted" x-text="e.where"></div>
+            <template x-if="e.template"><div><small class="muted">template: </small><code x-text="e.template"></code>
+              <a class="linkfind" x-show="e.reference" :href="e.reference" target="_blank" x-text="' ↗'"></a></div></template>
+            <div class="cmd" x-show="e.command">
+              <code x-text="e.command"></code>
+              <button class="secondary outline" @click="copy(e.command)">copy</button>
+            </div>
+            <details x-show="e.request || e.response || e.output">
+              <summary class="muted">raw</summary>
+              <template x-if="e.request"><pre class="raw" x-text="'REQUEST\n'+e.request"></pre></template>
+              <template x-if="e.response"><pre class="raw" x-text="'RESPONSE\n'+e.response"></pre></template>
+              <template x-if="e.output"><pre class="raw" x-text="e.output"></pre></template>
+            </details>
+          </div>
+        </template>
+
+        <h6>Notes &amp; evidence</h6>
+        <template x-for="it in thread(selData)" :key="it._t+(it.id||it.ts)">
+          <div class="note">
+            <template x-if="it._t==='image'"><a :href="'/api/evidence/'+it.id" target="_blank"><img class="shot" :src="'/api/evidence/'+it.id"></a></template>
+            <template x-if="it._t==='text'"><pre class="raw" x-text="it.body"></pre></template>
+            <template x-if="it._t==='note'"><div x-text="it.body"></div></template>
+            <small><span x-text="(it.author||'anon')+' · '+it.ts"></span><a class="linkfind"
+              x-show="it._t!=='note'" @click="delEvidence(it.id,'finding',sel)" title="remove"> · ✕</a></small>
+          </div>
+        </template>
+        <p x-show="!thread(selData).length" class="muted">No notes yet.</p>
+        <textarea x-model="noteBody" rows="2" @paste="onPasteNote($event,'finding',sel)"
+                  placeholder="add a note — type, or paste a screenshot (⌘/Ctrl+V)…"></textarea>
+        <div class="bar">
+          <label class="linkfind" title="attach an image" style="font-size:1.15em">🖼<input type="file"
+            accept="image/*" style="display:none" @change="onPick($event,'finding',sel)"></label>
+          <button class="grow" @click="addNote()" :disabled="!noteBody?.trim()">Add note</button>
+        </div>
+        <p class="muted" x-show="!author"><small>Set your name up top so notes are attributed.</small></p>
+      </article>
+    </div></template>
+  </div>
+</main>
+
+<!-- ============================ MACHINES ============================ -->
+<main x-show="view==='machines'">
+  <div class="bar" style="margin-bottom:.6rem">
+    <button class="outline" @click="addHostForm=!addHostForm" style="width:auto;padding:.2rem .6rem;white-space:nowrap">+ Add host</button>
+    <label class="bar grow" style="gap:.3rem;justify-content:flex-end" x-show="nExcluded"><input type="checkbox" x-model="showExcluded" role="switch">
+      <span class="muted" x-text="`show ${nExcluded} excluded`"></span></label>
+  </div>
+  <article x-show="addHostForm" style="padding:.6rem .8rem;margin-bottom:.6rem">
+    <div class="bar">
+      <input type="text" x-model="nm.ip" placeholder="IP (e.g. 10.0.0.5)" style="flex:1 1 8rem" @keydown.enter.prevent="createMachine()">
+      <input type="text" x-model="nm.hostname" placeholder="hostname (optional)" style="flex:1 1 8rem" @keydown.enter.prevent="createMachine()">
+      <input type="text" x-model="nm.os" placeholder="OS (required)" style="flex:1 1 8rem" @keydown.enter.prevent="createMachine()">
+      <input type="text" x-model="nm.domain" placeholder="domain (optional)" style="flex:1 1 8rem" @keydown.enter.prevent="createMachine()">
+      <button @click="createMachine()" :disabled="!nm.ip.trim() || !nm.os.trim()" style="width:auto;padding:.2rem .8rem">Add host</button>
+    </div>
+  </article>
+  <div class="layout" :class="{ split: selMachine }">
+    <figure>
+      <table>
+        <thead><tr><th>IP</th><th>Hostname</th><th>OS</th><th>Ports</th><th>Findings</th><th></th></tr></thead>
+        <tbody>
+          <template x-for="m in visibleMachines" :key="m.ip">
+            <tr class="row" :class="{ sel: m.ip===selMachine }" :style="m.excluded ? 'opacity:.5' : ''" @click="openMachine(m.ip)">
+              <td class="hosts"><span x-text="m.ip"></span><span class="dot" x-show="newM[m.ip]" title="new"></span></td>
+              <td x-text="m.hostname"></td>
+              <td class="muted" x-text="m.os"></td>
+              <td x-text="m.nports"></td>
+              <td x-text="m.nfindings"></td>
+              <td @click.stop>
+                <a class="linkfind muted" x-show="!m.excluded" @click="setExcluded(m, true)" title="exclude from the tracker">exclude</a>
+                <a class="linkfind" x-show="m.excluded" @click="setExcluded(m, false)" title="put back in scope">include</a>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </figure>
+
+    <template x-if="selMachine && selMachineData"><div class="detail">
+      <article>
+        <header class="bar">
+          <strong class="grow" x-text="(selMachineData?.hostname||'')+' · '+(selMachineData?.ip||'')"></strong>
+          <a class="linkfind" @click="selMachine=null">✕</a>
+        </header>
+        <p x-show="!selMachineData?.manual">
+          <span class="pill" x-show="selMachineData?.os" x-text="selMachineData?.os"></span>
+          <span class="pill" x-show="selMachineData?.domain" x-text="'domain: '+selMachineData?.domain"></span>
+        </p>
+        <!-- hand-added (manual) hosts: facts are editable (a scanned host's come from the scan) -->
+        <template x-if="selMachineData?.manual">
+          <div class="bar" style="flex-wrap:wrap;gap:.3rem;margin:.2rem 0 .5rem">
+            <input type="text" x-model="editM.ip" placeholder="IP" style="flex:1 1 7rem">
+            <input type="text" x-model="editM.hostname" placeholder="hostname" style="flex:1 1 7rem">
+            <input type="text" x-model="editM.os" placeholder="OS (required)" style="flex:1 1 7rem">
+            <input type="text" x-model="editM.domain" placeholder="domain" style="flex:1 1 7rem">
+            <button @click="saveMachineInfo()" :disabled="!editM.ip.trim() || !editM.os.trim()"
+                    style="width:auto;padding:.2rem .8rem">Save info</button>
+          </div>
+        </template>
+        <h6>Open ports</h6>
+        <figure><table>
+          <thead><tr><th>Port</th><th>Service</th><th>Product</th><th>Version</th></tr></thead>
+          <tbody>
+            <template x-for="p in selMachineData?.ports" :key="p.port">
+              <tr><td class="hosts"><a :href="'/api/machine/'+selMachineData.ip+'/nmap'" target="_blank"
+                     class="linkfind" x-text="p.port" title="open the nmap output (evidence)"></a></td>
+                  <td x-text="p.service"></td>
+                  <td class="muted" x-text="p.product"></td><td class="muted" x-text="p.version"></td></tr>
+            </template>
+          </tbody>
+        </table></figure>
+        <h6>Findings on this host</h6>
+        <p x-show="!selMachineData?.findings?.length" class="muted">None.</p>
+        <template x-for="fd in selMachineData?.findings" :key="fd.id">
+          <div class="bar" style="margin:.2rem 0">
+            <span class="sev" :class="fd.severity" x-text="fd.severity"></span>
+            <a class="grow linkfind" @click="gotoFinding(fd.id)" x-text="fd.title || fd.type"></a>
+            <span class="pill" x-text="fd.status"></span>
+          </div>
+        </template>
+
+        <h6>Notes &amp; evidence</h6>
+        <template x-for="it in thread(selMachineData)" :key="it._t+(it.id||it.ts)">
+          <div class="note">
+            <template x-if="it._t==='image'"><a :href="'/api/evidence/'+it.id" target="_blank"><img class="shot" :src="'/api/evidence/'+it.id"></a></template>
+            <template x-if="it._t==='text'"><pre class="raw" x-text="it.body"></pre></template>
+            <template x-if="it._t==='note'"><div x-text="it.body"></div></template>
+            <small><span x-text="(it.author||'anon')+' · '+it.ts"></span><a class="linkfind"
+              x-show="it._t!=='note'" @click="delEvidence(it.id,'machine',selMachine)" title="remove"> · ✕</a></small>
+          </div>
+        </template>
+        <p x-show="!thread(selMachineData).length" class="muted">No notes yet.</p>
+        <textarea x-model="noteBodyM" rows="2" @paste="onPasteNote($event,'machine',selMachine)"
+                  placeholder="add a note — creds, foothold, or paste a screenshot (⌘/Ctrl+V)…"></textarea>
+        <div class="bar">
+          <label class="linkfind" title="attach an image" style="font-size:1.15em">🖼<input type="file"
+            accept="image/*" style="display:none" @change="onPick($event,'machine',selMachine)"></label>
+          <button class="grow" @click="addMachineNote()" :disabled="!noteBodyM?.trim()">Add note</button>
+        </div>
+        <p class="muted" x-show="!author"><small>Set your name up top so notes are attributed.</small></p>
+      </article>
+    </div></template>
+  </div>
+</main>
+
+<!-- ============================ REPORT (writing aid, step 5) ============================ -->
+<main x-show="view==='report'">
+  <h5>To write up <span class="muted" x-text="`(${reportTodo.length})`"></span></h5>
+  <p x-show="!reportTodo.length" class="muted">Nothing to write up — everything is in the report or dismissed.</p>
+  <template x-for="f in reportTodo" :key="f.id">
+    <article>
+      <header class="bar">
+        <span class="sev" :class="f.severity" x-text="f.severity"></span>
+        <strong class="grow" x-text="(f.name||f.type) + (f.count>1?` (${f.count} hosts)`:'')"></strong>
+        <span class="pill" x-text="f.status"></span>
+        <button @click="markReport(f, true)">Mark in report</button>
+        <a class="linkfind muted" @click="dismissFromReport(f)" title="dismiss (keeps the record, just removes it here)">dismiss</a>
+      </header>
+      <p x-show="f.summary" x-text="f.summary" style="white-space:pre-wrap"></p>
+      <p class="hosts"><strong>Hosts:</strong> <span x-text="f.hosts_label.join(', ')"></span>
+        <span class="muted" x-text="' · '+f.source+' · confidence '+f.confidence"></span></p>
+
+      <strong class="muted">Evidence</strong>
+      <p x-show="!f.evidence?.length" class="muted"><small>No raw evidence captured.</small></p>
+      <template x-for="(e,i) in f.evidence" :key="i">
+        <div class="ev">
+          <div class="hosts muted" x-text="e.where"></div>
+          <template x-if="e.template"><div><small class="muted">template: </small><code x-text="e.template"></code></div></template>
+          <div class="cmd" x-show="e.command"><code x-text="e.command"></code>
+            <button class="secondary outline" @click="copy(e.command)">copy</button></div>
+          <details x-show="e.request || e.response || e.output">
+            <summary class="muted">raw</summary>
+            <template x-if="e.request"><pre class="raw" x-text="'REQUEST\n'+e.request"></pre></template>
+            <template x-if="e.response"><pre class="raw" x-text="'RESPONSE\n'+e.response"></pre></template>
+            <template x-if="e.output"><pre class="raw" x-text="e.output"></pre></template>
+          </details>
+        </div>
+      </template>
+
+      <template x-if="f.captured?.length"><div>
+        <strong class="muted">Captured</strong>
+        <template x-for="e in f.captured" :key="e.id">
+          <div class="ev">
+            <template x-if="e.kind==='image'"><a :href="'/api/evidence/'+e.id" target="_blank"><img class="shot" :src="'/api/evidence/'+e.id"></a></template>
+            <template x-if="e.kind==='text'"><pre class="raw" x-text="e.body"></pre></template>
+          </div>
+        </template>
+      </div></template>
+      <template x-if="f.notes?.length"><div>
+        <strong class="muted">Notes</strong>
+        <template x-for="n in f.notes" :key="n.ts+n.author">
+          <div class="note"><div x-text="n.body"></div><small x-text="n.author+' · '+n.ts"></small></div>
+        </template>
+      </div></template>
+    </article>
+  </template>
+
+  <h5 x-show="reportDone.length">In report <span class="muted" x-text="`(${reportDone.length})`"></span></h5>
+  <template x-for="f in reportDone" :key="f.id">
+    <article style="opacity:.55">
+      <header class="bar">
+        <span class="sev" :class="f.severity" x-text="f.severity"></span>
+        <strong class="grow" x-text="f.name||f.type"></strong>
+        <span class="hosts muted" x-text="f.hosts_label.join(', ')"></span>
+        <a class="linkfind" @click="markReport(f, false)">unmark</a>
+      </header>
+    </article>
+  </template>
+</main>
+
+<!-- ============================ LOGS (verbose scan log, auto-updating) ============================ -->
+<main x-show="view==='logs'">
+  <div class="bar" style="margin-bottom:.4rem">
+    <span class="muted grow"><small x-text="prog.running ? 'live — updating every few seconds' : 'latest scan log'"></small></span>
+    <a class="linkfind" @click="loadLog()">refresh</a>
+  </div>
+  <template x-for="sec in logSections" :key="sec.key">
+    <details class="logsec" open>
+      <summary x-text="`${sec.label} · ${sec.lines.length} lines`"></summary>
+      <pre class="logs sec" x-text="sec.lines.join('\n')"></pre>
+    </details>
+  </template>
+  <p x-show="!logSections.length" class="muted" x-text="scanLog ? 'no stage output yet' : 'Loading scan log…'"></p>
+</main>
+
+<script src="app.js"></script>
+<script defer src="vendor/alpine.min.js"></script>
+</body>
+</html>

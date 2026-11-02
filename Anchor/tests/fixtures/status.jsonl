@@ -1,0 +1,5 @@
+{"stage": "00 discovery", "tool": "masscan", "status": "ok", "exit": 0, "message": "", "ts": "2026-10-16T00:00:00Z"}
+{"stage": "00 discovery", "tool": "nmap", "status": "ok", "exit": 0, "message": "", "ts": "2026-10-16T00:00:01Z"}
+{"stage": "30 vuln", "tool": "nuclei", "status": "timeout", "exit": 124, "message": "timed out", "ts": "2026-10-16T00:00:02Z"}
+{"stage": "10 web", "tool": "ffuf", "status": "failed", "exit": 2, "message": "exit 2", "ts": "2026-10-16T00:00:03Z"}
+{"stage": "20 ad/unauth", "tool": "kerbrute", "status": "skipped", "exit": 0, "message": "no domain found", "ts": "2026-10-16T00:00:04Z"}

@@ -1,0 +1,47 @@
+# Anchor local test rig: a vulnerable target + the tools container, one network.
+#   docker compose up -d target      # bring up the victim
+#   docker compose up -d anchor      # tools container, held open (sleep infinity)
+#   docker compose exec anchor make scan TARGETS=target   # end-to-end scan
+# anchor reaches the target by the service name `target` (compose DNS) on port 3000.
+
+services:
+  # Deliberately-vulnerable web app. juice-shop is multi-arch (runs native on arm64) and
+  # gives httpx/nuclei/katana real hits. Pin a tag for a reproducible target.
+  target:
+    image: bkimminich/juice-shop:v18.0.0
+    restart: unless-stopped
+    # Port published to the host only for eyeballing; the scan reaches it container-to-container.
+    ports:
+      - "3000:3000"
+
+  # More deliberately-vulnerable targets on the same bridge so a SUBNET scan discovers several hosts
+  # (exercises discovery -> web -> vuln end to end, not just a seeded single target). Both are cached.
+  dvwa:
+    image: ghcr.io/digininja/dvwa:latest   # classic PHP vulns on :80
+    restart: unless-stopped
+  vampi:
+    image: erev0s/vampi:latest             # vulnerable REST API on :5000
+    restart: unless-stopped
+
+  anchor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Full AD toolchain by default; `WITH_AD=0 docker compose build` for a lean, Rust-free image.
+      args:
+        WITH_AD: ${WITH_AD:-1}
+    image: anchor-tools:latest
+    working_dir: /anchor
+    # Repo bind-mounted so edits to stages/ and the Makefile take effect with no rebuild.
+    volumes:
+      - ..:/anchor
+    # masscan/nmap SYN scans need raw sockets; grant the caps so the real pipeline works unedited.
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    # Hold the container open so you can `docker compose exec anchor ...`.
+    command: ["sleep", "infinity"]
+    depends_on:
+      - target
+      - dvwa
+      - vampi

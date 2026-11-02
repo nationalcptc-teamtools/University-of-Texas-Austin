@@ -1,0 +1,15 @@
+# Scan output: never version engagement artifacts (may hold sensitive host/cred data).
+engagement/
+stages/__pycache__/
+tests/__pycache__/
+__pycache__/
+
+# Secrets / local-only — never commit
+*.priv
+goad_jump.priv
+wg-client.conf
+docker/bloodhound/.bhce-pass
+docker/bloodhound/.env
+
+# macOS cruft
+.DS_Store

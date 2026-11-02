@@ -1,0 +1,8 @@
+[
+  {"template-id": "exposed-git-config", "info": {"name": "Exposed .git/config", "severity": "medium"}, "ip": "10.0.0.7", "host": "http://10.0.0.7"},
+  {"template-id": "exposed-git-config", "info": {"name": "Exposed .git/config", "severity": "medium"}, "ip": "10.0.0.5", "host": "http://10.0.0.5"},
+  {"template-id": "exposed-git-config", "info": {"name": "Exposed .git/config", "severity": "medium"}, "ip": "10.0.0.6", "host": "http://10.0.0.6"},
+  {"template-id": "apache-struts-rce", "info": {"name": "Apache Struts RCE", "severity": "critical"}, "ip": "10.0.0.5", "host": "http://10.0.0.5"},
+  {"template-id": "tls-weak-cipher", "info": {"name": "Weak TLS cipher", "severity": "low"}, "ip": "10.0.0.6", "host": "https://10.0.0.6"},
+  {"template-id": "http-missing-security-headers", "info": {"name": "Missing security headers", "severity": "info"}, "ip": "10.0.0.5", "host": "http://10.0.0.5"}
+]

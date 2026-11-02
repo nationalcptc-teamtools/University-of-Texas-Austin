@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nmaprun scanner="nmap" args="nmap -sV -sC">
+  <host>
+    <address addr="10.0.0.5" addrtype="ipv4"/>
+    <hostnames><hostname name="web01.corp.local" type="PTR"/></hostnames>
+    <ports>
+      <port protocol="tcp" portid="22"><state state="open"/><service name="ssh" product="OpenSSH" version="8.9"/></port>
+      <port protocol="tcp" portid="80"><state state="open"/><service name="http" product="nginx" version="1.18.0"/></port>
+      <port protocol="tcp" portid="443"><state state="open"/><service name="https" product="nginx" version="1.18.0"/></port>
+      <port protocol="tcp" portid="3306"><state state="closed"/><service name="mysql"/></port>
+    </ports>
+    <os><osmatch name="Linux 5.x" accuracy="95"/></os>
+  </host>
+</nmaprun>

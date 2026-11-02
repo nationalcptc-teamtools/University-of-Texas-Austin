@@ -1,0 +1,12 @@
+Certipy v4.8.2 - find -vulnerable
+
+Certificate Authorities
+  0
+    CA Name       : corp-DC01-CA
+    DNS Name      : dc01.corp.local
+    Subject Name  : CN=corp-DC01-CA, DC=corp, DC=local
+Certificate Templates
+  0
+    Template Name : UserAuthentication
+    [!] Vulnerabilities
+      ESC1 : 'CORP.LOCAL\\Domain Users' can enroll, enrollee supplies subject, client auth EKU
